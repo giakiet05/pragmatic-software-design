@@ -1,0 +1,1 @@
+../../../templates/06-tasks.template.md

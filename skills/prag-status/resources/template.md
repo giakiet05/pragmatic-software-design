@@ -1,0 +1,1 @@
+../../../templates/00-pipeline.template.md

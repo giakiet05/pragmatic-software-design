@@ -1,0 +1,1 @@
+../../../templates/05-database.template.md

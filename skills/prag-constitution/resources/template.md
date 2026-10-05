@@ -1,0 +1,1 @@
+../../../templates/constitution.template.md

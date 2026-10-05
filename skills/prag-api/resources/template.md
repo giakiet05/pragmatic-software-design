@@ -1,0 +1,1 @@
+../../../templates/04-api.template.md

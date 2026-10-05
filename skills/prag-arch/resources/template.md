@@ -1,0 +1,1 @@
+../../../templates/03-architecture.template.md
