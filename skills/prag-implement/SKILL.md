@@ -39,8 +39,7 @@ To prevent context window bloat and eliminate token fatigue:
 
 Before writing any application code or executing migrations:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`.
-2. **Prerequisite Stage Status Check**: Verify that **Stage 6 (Tasks Breakdown)** is marked `APPROVED`. If `docs/06-tasks.md` is in `IN_REVIEW`, `IN_PROGRESS`, or missing, **REJECT & HALT**:
-   > *"GATE VIOLATION: Cannot execute code implementation. Prerequisite 'docs/06-tasks.md' (Stage 6) has not been signed off (current status: [STATUS]). Please review `docs/06-tasks.md` and type 'duyệt tasks' or 'approve tasks' before implementing code."*
+2. **Prerequisite Stage Status Check**: Verify that **Stage 6 (Tasks Breakdown)** is marked `APPROVED`. If `docs/06-tasks.md` is in `IN_REVIEW`, `IN_PROGRESS`, or missing, report that prerequisite Stage 6 has not been signed off and halt execution, prompting the user to review `docs/06-tasks.md` first. (Respond in the user's conversational language).
 3. **Foundational Gate Check**: Phase 2 (Foundational Architecture) must be 100% completed and checked (`- [x]`) before implementing any Phase 3+ User Stories.
 4. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 7 (Implementation)** to `IN_PROGRESS`.
 

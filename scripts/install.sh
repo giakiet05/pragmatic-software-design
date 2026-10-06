@@ -103,7 +103,7 @@ for skill in "${SKILL_NAMES[@]}"; do
 done
 
 echo ""
-echo "Installation successful! 10 skills active in ${TARGET_DIR}:"
+echo "Installation successful! ${#SKILL_NAMES[@]} skills active in ${TARGET_DIR}:"
 for skill in "${SKILL_NAMES[@]}"; do
     echo "  - /${skill}"
 done

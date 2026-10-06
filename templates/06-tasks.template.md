@@ -26,6 +26,17 @@
 
 ---
 
+## Table of Contents
+- [1. Task Format & Traceability Conventions](#1-task-format--traceability-conventions)
+- [2. Definition of Done (DoD) - Mandatory Completion Checklist](#2-definition-of-done-dod---mandatory-completion-checklist)
+- [Phase 1: Setup & Shared Infrastructure](#phase-1-setup--shared-infrastructure)
+- [Phase 2: Foundational Infrastructure (Blocking Prerequisites)](#phase-2-foundational-infrastructure-blocking-prerequisites)
+- [Phase 3: User Story 1 - [Title] (Priority: P1 - MVP Core)](#phase-3-user-story-1---title-priority-p1---mvp-core)
+- [Phase 4: User Story 2 - [Title] (Priority: P2)](#phase-4-user-story-2---title-priority-p2)
+- [Phase 5: Hardening, Polish & Operational Verification](#phase-5-hardening-polish--operational-verification)
+
+---
+
 ## 1. Task Format & Traceability Conventions
 
 Every task item in this checklist MUST adhere to this strict structure:

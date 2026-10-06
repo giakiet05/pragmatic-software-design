@@ -23,9 +23,8 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 
 ## Pre-Execution Gatekeeper Verification
 
-Before generating or modifying `docs/01-brd.md`, execute this check:
-1. **Pipeline Dashboard Check**: Check if `<project-root>/docs/00-pipeline.md` exists. If not, verify `<project-root>/constitution.md`. If missing, **REJECT & HALT**:
-   > *"GATE VIOLATION: Cannot execute /prag-brd. Prerequisite 'constitution.md' is missing. Please run `/prag-constitution` first to establish project principles."*
+Before initiating `docs/01-brd.md`, execute this check:
+1. **Pipeline Dashboard Check**: Check if `<project-root>/docs/00-pipeline.md` exists. If not, verify `<project-root>/docs/constitution.md`. If missing, report that prerequisite 'docs/constitution.md' is missing and halt execution, prompting the user to run `/prag-constitution` first. (Respond in the user's conversational language).
 2. **Prerequisite Stage Status Check**: If `docs/00-pipeline.md` exists, verify that **Stage 0 (Constitution)** is marked `APPROVED`. If not, **REJECT & HALT**.
 3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 1 (BRD)** to `IN_PROGRESS`.
 
@@ -33,40 +32,57 @@ Before generating or modifying `docs/01-brd.md`, execute this check:
 
 ## Target File & Master Template
 
-- Target File: `<project-root>/docs/01-brd.md`
+- Target File: `<project-root>/docs/01-brd.md` (Always edited in-place; **NEVER** create versioned files like `01-brd-v1.md` or subfolders like `1-brd/`)
 - Governance Dashboard: `<project-root>/docs/00-pipeline.md`
 - Master Template: `resources/template.md` (or `templates/01-brd.template.md`)
 - Compliance Standard: **SEI CMMI-DEV v2.0 (RD & REQM)** and **ISO/IEC/IEEE 29148:2018**
 
 ---
 
-## Execution Workflow
+## Operational Execution Protocol
 
-### Step 1: Context Ingestion
-1. Read `<project-root>/constitution.md` to align with project governance.
-2. Ingest user prompt requirements, clarified decisions from `/prag-clarify`, and domain notes.
+### Mode 1: Collaborative Section Stepper (DEFAULT)
+By default, **DO NOT** generate or write the entire BRD in a single turn. Treat the skill as an interactive technical workshop with the user. Guide the user through the following 5 milestones strictly one section at a time:
 
-### Step 2: Content Generation / Delta Update
-Load `resources/template.md` and populate all sections:
-1. **Document Control & Sign-off**: Identifier `BRD-[PROJECT]-001`, revision history, approver RACI sign-off.
-2. **Strategic Vision & SMART Business Objectives**: Problem statement, target vision, and quantifiable Business Objectives (`BO-001`, `BO-002`) with baseline, target, and measurement metric.
-3. **Stakeholders & RACI Matrix**: Map Responsible, Accountable, Consulted, and Informed parties across business activities. Detail user personas with concrete pain points.
-4. **Scope Boundaries**: Explicit In-Scope capabilities vs strict Out-of-Scope boundaries (deferred to future phases).
-5. **Operational Concepts (AS-IS vs TO-BE)**: Current manual/legacy pain points vs future automated state.
-6. **User Journeys & Scenarios**: Prioritized journeys (P1 = MVP Core, P2, P3). Each scenario must include BDD acceptance criteria (`Given-When-Then`) and independent test verification.
-7. **Business Requirements (`BR-xxx`)**: Technology-agnostic capability statements specifying what the business needs.
-8. **Business Rules & Domain Invariants (`BU-R-xxx`)**: Calculation formulas, state models, qualification thresholds, idempotency/deduplication rules.
-9. **Bidirectional Traceability Matrix**: Complete CMMI mapping connecting `BO` $\leftrightarrow$ `BR` $\leftrightarrow$ `US` $\leftrightarrow$ `BU-R` $\leftrightarrow$ `Subsystem`.
+1. **Milestone 1: Business Context & Strategic Vision (Section 2)**:
+   - Discuss problem statement, target vision, and quantifiable SMART Business Objectives (`BO-001`, `BO-002`).
+   - STOP and confirm with user.
+2. **Milestone 2: Stakeholder Profiles, RACI & Scope Boundaries (Section 3 & 4)**:
+   - Establish Stakeholder RACI Matrix and User Personas.
+   - Define strict In-Scope capabilities (MVP) vs Out-of-Scope boundaries (deferred or prohibited).
+   - STOP and confirm with user.
+3. **Milestone 3: Operational Concepts & Core User Stories (Section 5)**:
+   - Analyze operational flow gaps: AS-IS vs TO-BE.
+   - Specify prioritized User Stories (`US-01`, `US-02`...) with Persona, Value Statement, Governing Business Rules, Independent Test, and BDD Given-When-Then criteria.
+   - STOP and confirm with user.
+4. **Milestone 4: High-Level Business Requirements & Business Rules (Section 6 & 7)**:
+   - Formalize business requirements (`BR-xxx`).
+   - Formalize invariant business rules (`BU-R-xxx`): threshold, lifecycle transition, scoring, deduplication.
+   - STOP and confirm with user.
+5. **Milestone 5: Business Constraints, Assumptions & Bidirectional Traceability Matrix (Section 8)**:
+   - Capture technical/regulatory/cost constraints and business assumptions.
+   - Assemble CMMI REQM Bidirectional Traceability Matrix linking `BO-xxx` <-> `US-xxx` <-> `BR-xxx` <-> `BU-R-xxx`.
+   - STOP and confirm with user.
 
-### Step 3: Incremental Update Rule
-If `docs/01-brd.md` already exists:
-- Do NOT blind-overwrite or truncate existing sections.
-- Merge newly introduced requirements or journeys, assign next sequential IDs (`BR-005`, `US-003`), update the revision table, and preserve existing sign-offs.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/01-brd.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần 1"*, *"save section"*). Write incrementally to the canonical file in-place.
 
-### Step 4: Post-Generation Gate Hook & Stop
-1. Save `<project-root>/docs/01-brd.md`.
+### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
+If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
+- Ingest upstream context from `docs/constitution.md` and user requirements.
+- Draft the complete `docs/01-brd.md` following `resources/template.md` in one execution.
+
+---
+
+## Maintenance & Surgical Updates
+- **Routine Minor Edits**: For minor adjustments (updating a business objective metric, adding an out-of-scope bullet, fixing terminology), the user can chat normally without invoking the skill. Perform surgical edits directly on `docs/01-brd.md`.
+- **Major Overhaul**: Re-running `/prag-brd` updates `docs/01-brd.md` in-place while preserving existing ratified identifiers (`BO`, `BR`, `US`).
+
+---
+
+## Post-Generation Gate Hook & Stop
+1. Verify `<project-root>/docs/01-brd.md` is updated.
 2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 1 (BRD)** status to `IN_REVIEW`.
 3. Output a brief summary highlighting:
    - Total Business Objectives (`BO`), Requirements (`BR`), and User Journeys (`US`).
    - Core In-Scope vs Out-of-Scope boundaries.
-4. **STOP** and instruct the user: *"BRD generated and saved to `docs/01-brd.md` (Stage 1: IN_REVIEW). Please review the document. Once satisfied, type 'duyệt brd' or 'approve brd' to formally sign off and unlock Stage 2 (/prag-srs)."*
+4. **STOP** and inform the user that `docs/01-brd.md` is updated (Stage 1: IN_REVIEW), prompting them to review the document and sign off ('duyệt brd' or 'approve brd') to unlock Stage 2 (/prag-srs). Always respond naturally in the user's conversational language.

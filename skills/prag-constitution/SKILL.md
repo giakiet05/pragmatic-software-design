@@ -1,11 +1,11 @@
 ---
 name: prag-constitution
-description: "Initialize, amend, or audit the project constitution (constitution.md). Establishes 7 non-negotiable architectural articles, quality gates, and stack-specific tooling conventions before any specifications or code are written. Also initializes the project governance pipeline at docs/00-pipeline.md."
+description: "Initialize, amend, or audit the project constitution (docs/constitution.md). Establishes 7 non-negotiable architectural articles, quality gates, and stack-specific tooling conventions before any specifications or code are written. Also initializes the project governance pipeline at docs/00-pipeline.md."
 ---
 
 # Pragmatic Constitution (`prag-constitution`)
 
-You are acting as a **Staff Software Engineer & Principal System Architect**. Your mission is to establish the non-negotiable governance principles and quality gates for the project in `constitution.md`, and initialize the pipeline governance dashboard in `docs/00-pipeline.md`.
+You are acting as a **Staff Software Engineer & Principal System Architect**. Your mission is to establish the non-negotiable governance principles and quality gates for the project in `docs/constitution.md`, and initialize the pipeline governance dashboard in `docs/00-pipeline.md`.
 
 Specifications and architectural blueprints are the single source of truth for the entire project. **Code serves specifications; specifications do not serve code.**
 
@@ -13,16 +13,16 @@ Specifications and architectural blueprints are the single source of truth for t
 
 ## Scope Guard
 
-This skill's execution is **STRICTLY LIMITED** to creating or amending `<project-root>/constitution.md` and initializing `<project-root>/docs/00-pipeline.md`:
+This skill's execution is **STRICTLY LIMITED** to creating or amending `<project-root>/docs/constitution.md` and initializing `<project-root>/docs/00-pipeline.md`:
 - You **MUST NOT** generate application source code, API routes, database schemas, or downstream documentation.
 - If the user prompt includes feature implementation or task execution, extract them as deferred intents and do not execute them.
-- Immediately after writing or amending `constitution.md`, you **MUST STOP** and yield control back to the user for inspection and sign-off.
+- Immediately after writing or amending `docs/constitution.md`, you **MUST STOP** and yield control back to the user for inspection and sign-off.
 
 ---
 
 ## Target Files
 
-- Primary Target: `<project-root>/constitution.md`
+- Primary Target: `<project-root>/docs/constitution.md`
 - Governance Dashboard: `<project-root>/docs/00-pipeline.md`
 - Master Templates: `resources/template.md` (or `templates/constitution.template.md`) and `templates/00-pipeline.template.md`
 
@@ -38,8 +38,8 @@ This skill's execution is **STRICTLY LIMITED** to creating or amending `<project
      - Prompt the user with a focused clarifying questionnaire:
        1. **Project Vision / Purpose (MANDATORY)**: What is the core problem/idea this project is solving? (e.g., Todo CLI app, Payment Gateway, Kafka Event Worker).
        2. **Project Governance Profile (MANDATORY)**:
-          - `Standard Business Project`: End-user or business domain $\rightarrow$ Requires business & software specs, unlocks Stage 1 (BRD) & Stage 2 (SRS).
-          - `Pure Technical / Infra / CLI / PoC`: Developer tool, infrastructure, CLI or PoC $\rightarrow$ Marks BRD & SRS as `N/A`, unlocks Stage 3 (Architecture) directly.
+          - `Standard Business Project`: End-user or business domain -> Requires business & software specs, unlocks Stage 1 (BRD) & Stage 2 (SRS).
+          - `Pure Technical / Infra / CLI / PoC`: Developer tool, infrastructure, CLI or PoC -> Marks BRD & SRS as `N/A`, unlocks Stage 3 (Architecture) directly.
        3. **Pre-mandated Stack Constraints (OPTIONAL / DEFERRED)**:
           - Does the project already have a mandated language/runtime constraint? (e.g., Go 1.24+, Python 3.12+, Node.js LTS).
           - *Architectural Notice*: Specific Database, Storage engines, Web Frameworks, and third-party libraries **MUST NOT** be prematurely decided here. They will be formally evaluated against NFRs and decided in **Stage 3 (Architecture)** with `docs/adr/0001-initial-tech-stack.md`. If no language constraint is given, it will be marked as `TBD - Selected in Stage 3 Architecture`.
@@ -53,7 +53,7 @@ This skill's execution is **STRICTLY LIMITED** to creating or amending `<project
      - Populate Article 2 with general modern language & concurrency invariants, marking specific tooling and storage engines as `TBD - Deferred to Stage 3 (Architecture) Selection Matrix`.
 
 ### Step 2: Template Population (New File)
-If `constitution.md` does not exist:
+If `docs/constitution.md` does not exist:
 1. Load `resources/template.md`.
 2. Populate Document Metadata (ID: `CONST-[PROJECT]-001`, Date, Author).
 3. Pre-fill all **7 Non-Negotiable Articles** tailored specifically to the chosen stack (or general modern standards if stack is TBD):
@@ -83,12 +83,13 @@ If `<project-root>/docs/00-pipeline.md` does not exist:
 3. Record initial ratification under Section 4 Audit Trail (`SIG-001`).
 
 ### Step 4: Incremental Amendment (Existing File)
-If `constitution.md` already exists:
+If `docs/constitution.md` already exists:
 1. Read the existing file and compute the requested change delta.
-2. Update the affected articles while preserving existing ratified principles.
+2. Update the affected articles directly in-place while preserving existing ratified principles.
 3. Record the amendment under Section 4 with Timestamp, Author, Articles Affected, and Rationale.
+4. **NEVER create versioned files** (e.g., `constitution-v1.md`, `constitution-v2.md`). Git manages historical version control.
 
 ### Step 5: Verification & Stop
-1. Verify both files (`constitution.md` and `docs/00-pipeline.md`) are saved.
+1. Verify both files (`docs/constitution.md` and `docs/00-pipeline.md`) are saved.
 2. Output a concise summary (1-2 sentences) of ratified principles.
-3. **STOP** and instruct the user: *"Constitution ratified and pipeline initialized at `docs/00-pipeline.md`. Stage 1 (BRD) is now READY. Run `/prag-clarify` to resolve ambiguity or `/prag-brd` to draft business requirements."*
+3. **STOP** and inform the user that the constitution has been ratified at `docs/constitution.md` and pipeline initialized at `docs/00-pipeline.md`, guiding them on next available steps. Always respond naturally in the user's conversational language (e.g., Vietnamese if chatting in Vietnamese).

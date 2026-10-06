@@ -1,2 +1,25 @@
+# Third-party Reference
 spec-kit/
+
+# Knowledge Base & Editor Settings
 .obsidian/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment & Secrets (Zero-Secrets Policy)
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+
+# Python Cache & Runtime Logs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log

@@ -25,7 +25,22 @@
 
 ---
 
-> **Note for AI Agent**: When generating `constitution.md` for a project via `/prag-constitution`, specialize the `Standards` lines to the project's **target tech stack** if pre-mandated by the user or detected from the workspace. If specific technology choices (such as runtime, database, storage, or frameworks) are not yet determined, mark them as `TBD - Deferred to Stage 3 (Architecture)` to prevent premature architectural decisions.
+> **Note for AI Agent**: When generating `docs/constitution.md` for a project via `/prag-constitution`, specialize the `Standards` lines to the project's **target tech stack** if pre-mandated by the user or detected from the workspace. If specific technology choices (such as runtime, database, storage, or frameworks) are not yet determined, mark them as `TBD - Deferred to Stage 3 (Architecture)` to prevent premature architectural decisions.
+
+---
+
+## Table of Contents
+- [1. Project Tech Stack & Standards](#1-project-tech-stack--standards)
+- [2. Core Principles (Non-Negotiable)](#2-core-principles-non-negotiable)
+  - [Article 1: Standard Library First & Minimal Dependencies](#article-1-standard-library-first--minimal-dependencies)
+  - [Article 2: Test-First Discipline & Concurrency Safety](#article-2-test-first-discipline--concurrency-safety)
+  - [Article 3: Structured JSON Logging Only](#article-3-structured-json-logging-only-zero-console-policy)
+  - [Article 4: Strict Explicit Error Handling](#article-4-strict-explicit-error-handling-zero-swallowing-policy)
+  - [Article 5: Pragmatic Layered Architecture](#article-5-pragmatic-layered-architecture-kiss--yagni-first)
+  - [Article 6: 12-Factor Configuration & Zero-Secrets Policy](#article-6-12-factor-configuration--zero-secrets-policy)
+  - [Article 7: Codebase Hygiene, 100% English & Doc Discipline](#article-7-codebase-hygiene-100-english--doc-discipline)
+- [3. Architecture Gates & Enforcement](#3-architecture-gates--enforcement)
+- [4. Customization & Amendments](#4-customization--amendments)
 
 ---
 
@@ -33,7 +48,7 @@
 
 *   **Primary Runtime & Language**: [e.g., Go 1.24+ | Python 3.12+ | Node.js 22 LTS | TBD - Deferred to Stage 3 Architecture]
 *   **Primary Database / Storage**: [e.g., PostgreSQL 16 | SQLite 3 | None / In-Memory | TBD - Deferred to Stage 3 Architecture]
-*   **Architectural Model**: Layered 4-Tier (`Router` $\rightarrow$ `Controller` $\rightarrow$ `Service` $\rightarrow$ `Repository`)
+*   **Architectural Model**: Layered 4-Tier (`Router` -> `Controller` -> `Service` -> `Repository`)
 *   **Package Manager**: [e.g., `go modules` | `uv` / `poetry` | `pnpm` / `npm` | TBD]
 *   **Test Runner**: [e.g., `go test -race ./...` | `pytest -v` | `node:test` / `vitest` | TBD]
 
@@ -63,7 +78,7 @@
 
 ### Article 5: Pragmatic Layered Architecture (KISS & YAGNI First)
 *   **Mandate**: The default structural model for all backend services is strictly **Layered Architecture (4 Tiers)**:
-    $$\text{Router} \longrightarrow \text{Controller} \longrightarrow \text{Service} \longrightarrow \text{Repository}$$
+    `Router` -> `Controller` -> `Service` -> `Repository`
     *   **Router**: Route mapping, URL pattern matching, and middleware pipeline piping.
     *   **Controller**: Request DTO binding, schema validation, HTTP response encoding, and status codes.
     *   **Service**: Pure business logic, workflow coordination, domain rules, and invariant enforcement.

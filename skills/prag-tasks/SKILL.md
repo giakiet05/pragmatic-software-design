@@ -24,15 +24,14 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 
 Before generating or modifying `docs/06-tasks.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify `docs/01-brd.md` through `docs/05-database.md`.
-2. **Prerequisite Stage Status Check**: Verify that **Stage 5 (Database Design)** is marked `APPROVED` or `N/A`. If Stage 5 is in `IN_REVIEW`, `IN_PROGRESS`, or `LOCKED`, **REJECT & HALT**:
-   > *"GATE VIOLATION: Cannot execute /prag-tasks. Prerequisite Stage 5 has not been signed off or bypassed as N/A (current status: [STATUS]). Please review Stage 5 or mark as N/A before proceeding to Tasks breakdown."*
+2. **Prerequisite Stage Status Check**: Verify that **Stage 5 (Database Design)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 5 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
 3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** to `IN_PROGRESS`.
 
 ---
 
 ## Target File & Master Template
 
-- Target File: `<project-root>/docs/06-tasks.md`
+- Target File: `<project-root>/docs/06-tasks.md` (Always edited in-place; **NEVER** create versioned files like `06-tasks-v1.md` or subfolders like `6-tasks/`)
 - Governance Dashboard: `<project-root>/docs/00-pipeline.md`
 - Master Template: `resources/template.md` (or `templates/06-tasks.template.md`)
 
@@ -63,28 +62,48 @@ A task CANNOT be marked complete (`- [x]`) unless ALL 6 criteria are verified:
 
 ---
 
-## Execution Workflow
+## Operational Execution Protocol
 
-### Step 1: Upstream Ingestion
-Read `01-brd.md`, `02-srs.md`, `03-architecture.md`, `04-api.md`, and `05-database.md`.
+### Mode 1: Collaborative Section Stepper (DEFAULT)
+By default, **DO NOT** generate or write the entire tasks breakdown in a single turn. Treat the skill as an interactive technical workshop with the user. Guide the user through the following 5 milestones strictly one section at a time:
 
-### Step 2: Content Generation / Delta Update
-Load `resources/template.md` and populate all sections:
-1. **Document Control**: Identifier `TSK-[PROJECT]-001`, revision history.
-2. **Phase 1: Project Setup & Developer Toolchains**: Module initialization, linter configuration, config loader, structured logger.
-3. **Phase 2: Foundational Architecture (BLOCKING GATE)**: Database pool with ping check, initial migrations, seed fixtures loader, core entity structs, HTTP router with CORS and RFC 7807 error middleware. *NO user stories may start until Phase 2 is complete.*
-4. **Phase 3+: User Stories (Prioritized by Value)**: Organized story-by-story following Test-First order: (1) Tests, (2) Repo queries, (3) Service logic, (4) Controller & routes, (5) Independent test checkpoint.
-5. **Phase N: Hardening & Operational Readiness**: Full test suite with race detection (`go test -race -cover ./...`), linter zero warnings, security audit (`govulncheck`), Docker smoke test (`docker compose up --build`).
+1. **Milestone 1: Task Format, 6-Point DoD & Phase 1 Setup & Toolchains (Section 1, 2, Phase 1)**:
+   - Establish task bracketed syntax conventions and confirm 6-point Definition of Done (DoD).
+   - Deconstruct Phase 1 tasks: module initialization, linter setup, typed config parser, structured JSON logger, and test runner.
+   - STOP and confirm with user.
+2. **Milestone 2: Phase 2 Foundational Infrastructure (BLOCKING GATE)**:
+   - Structure mandatory blocking gate before implementing business user stories.
+   - Tasks for database connection pool, migration engine runner, seed loader, core entity domain structs, and HTTP router with CORS and RFC 7807 error middleware.
+   - STOP and confirm with user.
+3. **Milestone 3: Phase 3 User Story 1 (MVP Core Feature) - Test-First Breakdown**:
+   - Deconstruct User Story 1 (MVP core feature) into test-first sequence: (1) Tests, (2) Repo queries, (3) Service logic & business rules, (4) Controller & routes, (5) Checkpoint verification.
+   - STOP and confirm with user.
+4. **Milestone 4: Phase 4+ User Story 2+ (Secondary & Integration Features)**:
+   - Deconstruct subsequent User Stories, marking independent tasks with parallel marker `[P]` across repository, service, and controller layers.
+   - STOP and confirm with user.
+5. **Milestone 5: Phase 5 Hardening, Polish & Operational Verification**:
+   - Establish comprehensive hardening tasks: full test suite pass with `-race`, 0 linter warnings, dependency vulnerability scan (`govulncheck`), Docker smoke test, and 6-point DoD audit.
+   - STOP and confirm with user.
 
-### Step 3: Incremental Update Rule
-If `docs/06-tasks.md` already exists:
-- Preserve all existing tasks and their checked state (`- [x]`).
-- Append newly required tasks with new sequential IDs, maintaining phase boundaries.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/06-tasks.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt Phase 1-2"*, *"save section"*). Write incrementally to the canonical file in-place.
 
-### Step 4: Post-Generation Gate Hook & Stop
+### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
+If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
+- Ingest upstream context from `docs/constitution.md` through `docs/05-database.md`.
+- Draft the complete `docs/06-tasks.md` following `resources/template.md` in one execution.
+
+---
+
+## Maintenance & Surgical Updates
+- **Routine Minor Edits**: For minor adjustments (adding a task, marking a task done, tweaking a target file path), the user can chat normally without invoking the skill. Perform surgical edits directly on `docs/06-tasks.md`.
+- **Sprint / Milestone Re-planning**: Re-running `/prag-tasks` updates `docs/06-tasks.md` in-place while preserving already completed `[x]` tasks.
+
+---
+
+## Post-Generation Gate Hook & Stop
 1. Save `<project-root>/docs/06-tasks.md`.
 2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** status to `IN_REVIEW`.
-3. Output a brief summary highlighting:
+3. Output a brief task summary highlighting:
    - Total task count and parallelizable `[P]` tasks.
-   - Structure of Phase 1, Phase 2, and Story phases.
-4. **STOP** and instruct the user: *"Tasks breakdown saved to `docs/06-tasks.md` (Stage 6: IN_REVIEW). Please review the tasks. Once satisfied, type 'duyệt tasks' or 'approve tasks' to formally sign off and unlock Stage 7 (/prag-implement)."*
+   - Phase 2 blocking foundation components.
+4. **STOP** and inform the user that `docs/06-tasks.md` is saved (Stage 6: IN_REVIEW), prompting them to review the task breakdown and sign off ('duyệt tasks' or 'approve tasks') to unlock Stage 7 (/prag-implement). Always respond naturally in the user's conversational language.

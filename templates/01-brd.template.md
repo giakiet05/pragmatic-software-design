@@ -32,6 +32,31 @@
 
 ---
 
+## Table of Contents
+- [1. Document Control & Revision History](#1-document-control--revision-history)
+- [2. Business Context & Strategic Vision](#2-business-context--strategic-vision)
+  - [2.1 Problem Statement](#21-problem-statement)
+  - [2.2 Project Vision Statement](#22-project-vision-statement)
+  - [2.3 Measurable Business Objectives (BO)](#23-measurable-business-objectives-bo---smart-criteria)
+- [3. Stakeholder Profiles & Personas](#3-stakeholder-profiles--personas)
+  - [3.1 Stakeholder RACI Matrix](#31-stakeholder-raci-matrix)
+  - [3.2 User Personas](#32-user-personas)
+- [4. Project Scope Boundaries](#4-project-scope-boundaries)
+  - [4.1 In-Scope (MVP & Release Baseline)](#41-in-scope-mvp--release-baseline)
+  - [4.2 Strict Out-of-Scope (Deferred or Prohibited)](#42-strict-out-of-scope-deferred-or-prohibited)
+- [5. Operational Concepts & User Scenarios](#5-operational-concepts--user-scenarios)
+  - [5.1 Current State Operational Flow (AS-IS Process)](#51-current-state-operational-flow-as-is-process)
+  - [5.2 Target State Operational Flow (TO-BE Process)](#52-target-state-operational-flow-to-be-process)
+  - [5.3 Core User Scenarios & User Stories (US)](#53-core-user-scenarios--user-stories-us)
+- [6. High-Level Business Requirements (BR)](#6-high-level-business-requirements-br)
+- [7. Business Rules (BU-R)](#7-business-rules-bu-r)
+- [8. Business Constraints, Assumptions & Traceability Matrix](#8-business-constraints-assumptions--traceability-matrix)
+  - [8.1 Business Constraints](#81-business-constraints)
+  - [8.2 Business Assumptions](#82-business-assumptions)
+  - [8.3 Bidirectional Traceability Matrix (CMMI REQM)](#83-bidirectional-traceability-matrix-sei-cmmi-dev-reqm)
+
+---
+
 ## 2. Business Context & Strategic Vision
 
 ### 2.1 Problem Statement
@@ -132,23 +157,29 @@
 -->
 
 #### User Story 1 (US-01): [Journey Title] (Priority: P1 - MVP Core)
-*   **User Story**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
+*   **User Persona**: [Primary Actor / Persona from Section 3.2]
+*   **Value Statement**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
 *   **Business Value**: [Why this story directly supports BO-01 / BO-02]
+*   **Governing Business Rules**: [e.g., BU-R-01, BU-R-02]
 *   **Independent Test**: [How to verify this capability end-to-end independently]
 *   **Acceptance Criteria (BDD / Given-When-Then)**:
     1.  **Given** [preconditions and state], **When** [trigger action occurs], **Then** [expected business outcome].
     2.  **Given** [boundary condition / missing input], **When** [action attempted], **Then** [graceful fallback or validation feedback].
 
 #### User Story 2 (US-02): [Journey Title] (Priority: P1 - MVP Core)
-*   **User Story**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
+*   **User Persona**: [Primary Actor / Persona from Section 3.2]
+*   **Value Statement**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
 *   **Business Value**: [Operational impact]
+*   **Governing Business Rules**: [e.g., BU-R-02]
 *   **Independent Test**: [Verification method]
 *   **Acceptance Criteria (BDD / Given-When-Then)**:
     1.  **Given** [preconditions], **When** [action], **Then** [expected outcome].
 
 #### User Story 3 (US-03): [Journey Title] (Priority: P2)
-*   **User Story**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
+*   **User Persona**: [Primary Actor / Persona from Section 3.2]
+*   **Value Statement**: As a [Persona], I want to [Perform Action], so that [Achieve Business Benefit].
 *   **Business Value**: [Efficiency multiplier]
+*   **Governing Business Rules**: [e.g., BU-R-03]
 *   **Independent Test**: [Verification method]
 *   **Acceptance Criteria (BDD / Given-When-Then)**:
     1.  **Given** [preconditions], **When** [action], **Then** [expected outcome].
@@ -177,7 +208,7 @@
 
 ### BU-R-01: [Threshold / Qualification Rule - e.g., Event Recognition Criteria]
 *   A candidate cluster of items is formally recognized as an active business entity only when:
-    1.  Item count meets or exceeds minimum threshold: $N_{\min} \ge 3$.
+    1.  Item count meets or exceeds minimum threshold: N_min >= 3.
     2.  Cumulative interaction volume surpasses the configured baseline threshold.
     3.  The cluster is not categorized as spam, noise, or advertising content.
 
@@ -189,13 +220,13 @@ The system categorizes entity lifecycles into distinct operational states:
 4.  **Decaying**: No new items detected in successive observation windows; novelty score decreases over time.
 
 ### BU-R-03: [Scoring & Classification Rule - e.g., Risk Level Tiers]
-*   **Low (Green)**: Routine topics, lifestyle, entertainment; negative sentiment ratio $< 15\%$.
-*   **Medium (Yellow)**: Controversial public debates, moderate service dissatisfaction; negative ratio $15\% - 40\%$.
-*   **High (Red)**: Critical incidents, severe reputational crises, legal violations, safety hazards; negative ratio $> 40\%$ or presence of critical safety entity flags.
+*   **Low (Green)**: Routine topics, lifestyle, entertainment; negative sentiment ratio < 15%.
+*   **Medium (Yellow)**: Controversial public debates, moderate service dissatisfaction; negative ratio 15% - 40%.
+*   **High (Red)**: Critical incidents, severe reputational crises, legal violations, safety hazards; negative ratio > 40% or presence of critical safety entity flags.
 
 ### BU-R-04: [Deduplication & Merge Rule]
 *   When a new event cluster emerges, the system computes composite similarity against active entities from the previous [48 hours].
-*   If similarity index $\ge 0.75$, the system MUST merge the items into the existing entity rather than generating a duplicate record.
+*   If similarity index >= 0.75, the system MUST merge the items into the existing entity rather than generating a duplicate record.
 
 ---
 

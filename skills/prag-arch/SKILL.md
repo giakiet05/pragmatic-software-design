@@ -14,8 +14,8 @@ Specifications and architectural blueprints are the single source of truth for t
 ## Scope Guard & Gate Enforcement
 
 This skill's execution is **STRICTLY LIMITED** to creating or updating:
-- `<project-root>/docs/03-architecture.md`
-- Initial ADR at `<project-root>/docs/adr/0001-initial-tech-stack.md`
+- `<project-root>/docs/03-architecture.md` (Always edited in-place; **NEVER** create versioned files like `03-arch-v1.md`)
+- Discrete ADRs at `<project-root>/docs/adr/ADR-[PROJECT]-[NUMBER]-[slug].md` (Strictly 1 decision per ADR; N ADRs for N tech choices)
 - Updating stage metadata in `<project-root>/docs/00-pipeline.md`
 
 You **MUST NOT** generate detailed API endpoint contracts (`04-api.md`), database schemas (`05-database.md`), task checklists (`06-tasks.md`), or application source code.
@@ -28,8 +28,7 @@ Immediately after completing the architecture blueprint, you **MUST STOP** and y
 
 Before generating or modifying `docs/03-architecture.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify `docs/01-brd.md` and `docs/02-srs.md`.
-2. **Prerequisite Stage Status Check**: Verify that **Stage 2 (SRS)** is marked `APPROVED` or `N/A`. If Stage 2 is in `IN_REVIEW`, `IN_PROGRESS`, or `LOCKED`, **REJECT & HALT**:
-   > *"GATE VIOLATION: Cannot execute /prag-arch. Prerequisite Stage 2 (SRS) has not been signed off or bypassed as N/A (current status: [STATUS]). Please review `docs/02-srs.md` or mark as N/A before proceeding to Architecture."*
+2. **Prerequisite Stage Status Check**: Verify that **Stage 2 (SRS)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 2 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
 3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 3 (Architecture)** to `IN_PROGRESS`.
 
 ---
@@ -37,6 +36,7 @@ Before generating or modifying `docs/03-architecture.md`, execute this check:
 ## Target Files & Master Templates
 
 - Target Document: `<project-root>/docs/03-architecture.md`
+- Discrete ADR Directory: `<project-root>/docs/adr/`
 - Governance Dashboard: `<project-root>/docs/00-pipeline.md`
 - Master Template: `resources/template.md` (or `templates/03-architecture.template.md`)
 - Tactics Reference: `resources/quality-tactics.md`
@@ -45,28 +45,55 @@ Before generating or modifying `docs/03-architecture.md`, execute this check:
 
 ---
 
-## Execution Workflow
+## Operational Execution Protocol
 
-### Step 1: Upstream Alignment
-Read `constitution.md`, `01-brd.md`, and `02-srs.md`. Map functional requirements (`FR-xxx`) and ATAM quality attribute scenarios to architectural mechanisms.
+### Mode 1: Collaborative Section Stepper (DEFAULT)
+By default, **DO NOT** generate or write the entire architecture document in a single turn. Treat the skill as an interactive technical workshop with the user. Guide the user through the following 6 milestones strictly one section at a time:
 
-### Step 2: Content Generation / Delta Update
-Load `resources/template.md` and populate all sections:
-1. **Document Control**: Identifier `SAD-[PROJECT]-001`, revision history, approver sign-off.
-2. **Consolidated Technology Stack & Selection Matrix**: 8-column matrix defending every technology choice against alternatives and standard-library options.
-3. **4-Tier Layered Architecture**: Boundary: `Router / Transport` $\rightarrow$ `Controller / Handler` $\rightarrow$ `Service / Domain` $\rightarrow$ `Repository / Data Access`.
-4. **C4 Model Architecture Diagrams**: Level 1 (System Context) and Level 2 (Container) diagrams authored directly as inline ````mermaid` fenced code blocks inside `docs/03-architecture.md` (no external .mmd/.svg files needed; native vector rendering on GitHub, GitLab, and Obsidian).
-5. **Dynamic & Event Flows**: Selective Technical Sequence Diagrams (White-Box) authored directly as inline ````mermaid` fenced code blocks for failure-critical or multi-component flows (>= 3 components).
-6. **Capacity Planning & Sizing**: Storage velocity calculation, cache RAM sizing, scaling horizon triggers.
-7. **Cross-Cutting Concerns & HA/DR Runbooks**: Cache-aside, circuit breaker, token bucket, traceparent, SPOF analysis, RTO/RPO targets.
-8. **Rollout & Zero-Downtime Migration Strategy**: Rolling update topology, expand-and-contract database migration discipline.
-9. **ADR Initialization**: Create or update `docs/adr/0001-initial-tech-stack.md` using `templates/adr.template.md`.
-10. **Complexity Tracking**: Defend any non-standard pattern against KISS and YAGNI.
+1. **Milestone 1: Architecture Drivers, Quality Targets & Stack Selection (Section 1 & 2)**:
+   - **Architecture Discovery Gate (MANDATORY)**: Read `docs/constitution.md`, `01-brd.md`, and `02-srs.md`. Propose 2-3 architectural approaches (Modular Monolith vs Microservices) and candidates for core tech stack with trade-offs.
+   - Establish non-negotiable technical constraints and SLA/SLO drivers.
+   - **STOP and wait for user confirmation**. DO NOT write any files until the user chooses the architectural style and tech stack.
+2. **Milestone 2: Architecture Style, 4-Tier Layer Boundaries & Layout (Section 3)**:
+   - Establish strict 4-tier layer boundaries (`Router` -> `Controller` -> `Service` -> `Repository`), forbidden dependencies, and interface-driven decoupling.
+   - Author the unified directory layout tailored to the chosen runtime (e.g. Go: `cmd/`, `internal/{router,controller,service,repository,model}/`).
+   - STOP and confirm with user.
+3. **Milestone 3: Structural Views (C4 Model) (Section 4)**:
+   - Structure Level 1 (System Context) and Level 2 (Container) diagrams using inline ````mermaid` blocks (Level 3 Component view selective).
+   - STOP and confirm with user.
+4. **Milestone 4: Dynamic, Data & Event Flow View (Section 5)**:
+   - Author streamlined data/event pipelines and Mermaid sequence diagrams for critical interaction flows.
+   - STOP and confirm with user.
+5. **Milestone 5: Capacity Planning & Scalability Horizons (Section 6)**:
+   - Calculate mathematical estimates: Peak RPS, network bandwidth, DB and object storage growth.
+   - Minimum resource sizing (CPU, RAM, Disk IOPS) and evolution triggers (Scale-up, Scale-out, Read Replicas).
+   - STOP and confirm with user.
+6. **Milestone 6: Cross-Cutting Tactics, Deployment & Discrete ADRs (Section 7, 8, 9)**:
+   - Detail architectural tactics: Caching, Rate Limiting, Circuit Breaker, Idempotency, and FMEA failure recovery.
+   - Deployment configuration (Docker Compose / K8s pods), zero-downtime rollout strategy.
+   - Generate **N discrete ADR files** in `docs/adr/` (`ADR-0001-...md`, `ADR-0002-...md`, etc.). Strictly **one decision per ADR**. Populate Section 9 ADR index and KISS/YAGNI Complexity Defense Table.
+   - STOP and confirm with user.
 
-### Step 3: Post-Generation Gate Hook & Stop
-1. Save `<project-root>/docs/03-architecture.md` and `docs/adr/0001-initial-tech-stack.md`.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/03-architecture.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần C4"*, *"save section"*). Write incrementally to the canonical file in-place.
+
+### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
+If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
+- Ingest upstream context from `docs/constitution.md`, `docs/01-brd.md`, and `docs/02-srs.md`.
+- Draft the complete `docs/03-architecture.md` and generate all corresponding discrete ADRs in `docs/adr/` in one execution.
+
+---
+
+## Maintenance & Surgical Updates
+- **Routine Minor Edits**: For minor adjustments (updating sizing numbers, tweaking container specs, clarifying an HA scenario), the user can chat normally without invoking the skill. Perform surgical edits directly on `docs/03-architecture.md`.
+- **Major Architecture Pivot**: Re-running `/prag-arch` updates `docs/03-architecture.md` in-place while keeping ADR references synchronized.
+
+---
+
+## Post-Generation Gate Hook & Stop
+1. Save `<project-root>/docs/03-architecture.md` and all generated ADRs in `docs/adr/`.
 2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 3 (Architecture)** status to `IN_REVIEW`.
 3. Output a brief architectural summary highlighting:
    - Selected tech stack and primary trade-off rationale.
    - High-level container topology and capacity sizing highlights.
-4. **STOP** and instruct the user: *"Architecture blueprint saved to `docs/03-architecture.md` (Stage 3: IN_REVIEW). Please review the document and diagrams. Once satisfied, type 'duyệt arch' or 'approve arch' to formally sign off and unlock Stage 4 (/prag-api)."*
+   - List of discrete ADRs created in `docs/adr/`.
+4. **STOP** and inform the user that `docs/03-architecture.md` and discrete ADRs are saved (Stage 3: IN_REVIEW), prompting them to review the architecture and sign off ('duyệt arch' or 'approve arch') to unlock Stage 4 (/prag-api). Always respond naturally in the user's conversational language.

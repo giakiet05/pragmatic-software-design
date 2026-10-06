@@ -27,6 +27,39 @@
 
 ---
 
+## Table of Contents
+- [1. Architecture Drivers & Constraints](#1-architecture-drivers--constraints)
+  - [1.1 Key Quality Attribute Drivers (SLA/SLO Targets)](#11-key-quality-attribute-drivers-slaslo-targets)
+  - [1.2 Non-Negotiable Technical Constraints](#12-non-negotiable-technical-constraints)
+- [2. Technology Stack & Selection Matrix](#2-technology-stack--selection-matrix)
+- [3. Architecture Style & Boundary Rules](#3-architecture-style--boundary-rules)
+  - [3.1 Architectural Pattern](#31-architectural-pattern)
+  - [3.2 Strict 4-Tier Layering Invariants](#32-strict-4-tier-layering-invariants)
+  - [3.3 Architectural Guardrails (Forbidden Dependencies)](#33-architectural-guardrails-forbidden-dependencies)
+  - [3.4 Unified Directory Layout](#34-unified-directory-layout)
+- [4. Structural Views (C4 Model)](#4-structural-views-c4-model)
+  - [4.1 System Context View (C4 Level 1)](#41-system-context-view-c4-level-1)
+  - [4.2 Container View (C4 Level 2)](#42-container-view-c4-level-2)
+  - [4.3 Component View (C4 Level 3 - Selective)](#43-component-view-c4-level-3---selective)
+- [5. Dynamic, Data & Event Flow View](#5-dynamic-data--event-flow-view)
+  - [5.1 Streamlined Data & Event Pipeline](#51-streamlined-data--event-pipeline)
+  - [5.2 Core Interaction Sequences](#52-core-interaction-sequences-selective-technical-sequence-diagrams)
+- [6. Capacity Planning & Scalability Horizons](#6-capacity-planning--scalability-horizons)
+  - [6.1 Resource Sizing & Storage Growth Estimations](#61-resource-sizing--storage-growth-estimations)
+  - [6.2 Scalability Horizons & Evolution Triggers](#62-scalability-horizons--evolution-triggers)
+- [7. Cross-Cutting Tactics & High Availability / Disaster Recovery (HA/DR)](#7-cross-cutting-tactics--high-availability--disaster-recovery-hadr)
+  - [7.1 Cross-Cutting Architectural Tactics (ADD)](#71-cross-cutting-architectural-tactics-attribute-driven-design)
+  - [7.2 High Availability & Disaster Recovery (HA/DR)](#72-high-availability--disaster-recovery-hadr)
+- [8. Deployment, Infrastructure & Rollout Strategy](#8-deployment-infrastructure--rollout-strategy)
+  - [8.1 Network Topology & Zone Isolation](#81-network-topology--zone-isolation)
+  - [8.2 Container Specifications & Resource Governance](#82-container-specifications--resource-governance)
+  - [8.3 Rollout & Data Evolution Strategy](#83-rollout--data-evolution-strategy)
+- [9. Appendix: Architectural Decision Records & Complexity Tracking](#9-appendix-architectural-decision-records--complexity-tracking)
+  - [9.1 Index of Governing ADRs](#91-index-of-governing-adrs)
+  - [9.2 Complexity Defense Table (KISS & YAGNI Enforcement)](#92-complexity-defense-table-kiss--yagni-enforcement)
+
+---
+
 ## 1. Architecture Drivers & Constraints
 
 This architecture is driven by the Quality Attributes (NFRs) defined in `docs/02-srs.md` (Section 4 & Section 5) and constrained by non-negotiable operational boundaries.

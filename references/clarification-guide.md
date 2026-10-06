@@ -30,7 +30,7 @@ Scan user input and existing documents across these 6 categories to identify hig
 
 ### Category B: Domain & Data Integrity (Invariants)
 *   Key entities, relationships, cardinality, and uniqueness constraints.
-*   State machine lifecycle transitions (e.g., Draft $\rightarrow$ Published $\rightarrow$ Archived).
+*   State machine lifecycle transitions (e.g., Draft -> Published -> Archived).
 *   Data volume and scale assumptions (row counts, retention rules).
 
 ### Category C: Non-Functional Quality Attributes (Utility Tree Candidates)
@@ -74,6 +74,6 @@ Every question presented to the user MUST adhere to this exact Markdown layout:
 ## 5. Early Exit Conditions
 
 Stop asking questions immediately when:
-*   All high-impact uncertainties (Impact $\times$ Uncertainty heuristic) are resolved.
+*   All high-impact uncertainties (Impact × Uncertainty heuristic) are resolved.
 *   User signals completion (*"done"*, *"enough"*, *"proceed"*, *"chơi luôn"*).
 *   The 5-question limit is reached.

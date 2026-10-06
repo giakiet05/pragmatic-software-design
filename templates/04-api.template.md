@@ -28,6 +28,40 @@
 
 ---
 
+## Table of Contents
+- [1. Global API Conventions, Transport & Security](#1-global-api-conventions-transport--security)
+  - [1.1 Base URL & Content Negotiation](#11-base-url--content-negotiation)
+  - [1.2 Authentication & Security Headers](#12-authentication--security-headers)
+  - [1.3 CORS Policy & Header Exposure](#13-cors-policy--header-exposure)
+- [2. Querying Standards: Pagination, Filtering, Sorting & Sparse Fields](#2-querying-standards-pagination-filtering-sorting--sparse-fields)
+  - [2.1 Pagination Standards](#21-pagination-standards)
+  - [2.2 Sorting Conventions](#22-sorting-conventions)
+  - [2.3 Filtering Conventions](#23-filtering-conventions)
+  - [2.4 Sparse Fieldsets (Field Projection)](#24-sparse-fieldsets-field-projection)
+- [3. Standardized Response & Error Envelopes](#3-standardized-response--error-envelopes)
+  - [3.1 Unified Success Envelope](#31-unified-success-envelope)
+  - [3.2 Unified Error Envelope (RFC 7807 Compliant)](#32-unified-error-envelope-rfc-7807-compliant)
+  - [3.3 HTTP Status Codes Matrix](#33-http-status-codes-matrix)
+  - [3.4 Application-Specific Custom Error Code Dictionary](#34-application-specific-custom-error-code-dictionary)
+- [4. Concurrency Control, HTTP Caching & API Lifecycle](#4-concurrency-control-http-caching--api-lifecycle)
+  - [4.1 Concurrency Control (Lost Update Prevention via ETags)](#41-concurrency-control-lost-update-prevention-via-etags)
+  - [4.2 HTTP Caching & Bandwidth Optimization](#42-http-caching--bandwidth-optimization)
+  - [4.3 Versioning, Breaking Changes & Deprecation Policy](#43-versioning-breaking-changes--deprecation-policy)
+- [5. Endpoint Specifications by Resource](#5-endpoint-specifications-by-resource)
+  - [5.1 Authentication Resource](#51-authentication-resource-apiv1auth)
+  - [5.2 Orders Resource](#52-orders-resource-apiv1orders)
+  - [5.3 Bulk / Batch Operations](#53-bulk--batch-operations-apiv1ordersbulk-cancel)
+  - [5.4 Long-Running Asynchronous Jobs](#54-long-running-asynchronous-jobs-apiv1jobs)
+- [6. File Transfer Architecture](#6-file-transfer-architecture)
+  - [6.1 Direct-to-Storage via Pre-signed URL](#61-direct-to-storage-via-pre-signed-url-standard-pattern)
+  - [6.2 Multipart Form-Data (Small Asset Fallback)](#62-multipart-form-data-small-asset-fallback)
+- [7. Real-Time & Event Streaming: Webhooks, SSE & WebSockets](#7-real-time--event-streaming-webhooks-sse--websockets)
+  - [7.1 Outbound Webhooks (Server-to-Server Event Dispatch)](#71-outbound-webhooks-server-to-server-event-dispatch)
+  - [7.2 Server-Sent Events - SSE](#72-server-sent-events---sse-unidirectional-server-to-client-streaming)
+  - [7.3 WebSockets (Full-Duplex Bidirectional Real-Time)](#73-websockets-full-duplex-bidirectional-real-time)
+
+---
+
 ## 1. Global API Conventions, Transport & Security
 
 ### 1.1 Base URL & Content Negotiation
@@ -440,7 +474,7 @@ For read-heavy static or semi-static resources:
 ## 6. File Transfer Architecture
 
 ### 6.1 Direct-to-Storage via Pre-signed URL (Standard Pattern)
-Direct binary streaming through backend API gateways saturates server memory and thread pools. The direct-to-storage pattern is strictly enforced for files $> 5\text{ MB}$:
+Direct binary streaming through backend API gateways saturates server memory and thread pools. The direct-to-storage pattern is strictly enforced for files > 5 MB:
 
 ```mermaid
 sequenceDiagram
@@ -465,7 +499,7 @@ sequenceDiagram
 ```
 
 ### 6.2 Multipart Form-Data (Small Asset Fallback)
-*   **Application**: Permitted only for low-overhead files $< 5\text{ MB}$ (e.g., user avatar images).
+*   **Application**: Permitted only for low-overhead files < 5 MB (e.g., user avatar images).
 *   **Endpoint**: `POST /api/v1/users/me/avatar`
 *   **Content-Type**: `multipart/form-data`
 *   **Security Restrictions**: Explicit validation of magic bytes (file signature), image dimensions, and strict MIME type checking (PNG, JPEG, WebP only).
@@ -477,7 +511,7 @@ sequenceDiagram
 ### 7.1 Outbound Webhooks (Server-to-Server Event Dispatch)
 *   **Transport**: HTTPS POST to subscriber registered endpoint.
 *   **Signature Verification**: Header `X-Signature-SHA256: <hmac_hex>` computed using `HMAC-SHA256(payload, shared_secret)`.
-*   **Replay Attack Protection**: Header `X-Timestamp: <unix_epoch>`. Webhook receivers MUST reject events with timestamp skew $> 300\text{ seconds}$.
+*   **Replay Attack Protection**: Header `X-Timestamp: <unix_epoch>`. Webhook receivers MUST reject events with timestamp skew > 300 seconds.
 *   **Retry Policy**: Exponential backoff with jitter (immediate, 1m, 5m, 15m, 1h). Unsuccessful deliveries after 5 attempts transition to dead-letter queue.
 
 #### Sample Webhook Event: `order.paid`

@@ -13,17 +13,19 @@ Specifications and architectural blueprints are the single source of truth for t
 
 ## Scope Guard
 
-This skill's execution is **STRICTLY LIMITED** to creating or updating an individual ADR file:
-- Target path: `<project-root>/docs/adr/ADR-[PROJECT]-[NUMBER]-[slug].md` (or `000X-[slug].md`).
-- You **MUST NOT** rewrite broad system blueprints (`03-architecture.md`) or generate application code.
-- Only create an ADR for significant, architecturally consequential decisions (database selection, caching strategy, auth model, messaging system, concurrency primitives). Do NOT create ADRs for trivial CRUD or routine bug fixes.
-- Immediately after creating the ADR, you **MUST STOP** and yield control back to the user for review.
+This skill's execution is **STRICTLY LIMITED** to creating or updating an individual ADR file and synchronizing with the master architecture document:
+- Target path: `<project-root>/docs/adr/ADR-[PROJECT]-[NUMBER]-[slug].md`.
+- **Single Decision Principle (STRICT)**: Exactly ONE technical decision per ADR (e.g., Database choice, Broker choice, Concurrency primitive). NEVER bundle multiple technologies or architectural layers into a single ADR.
+- **Bidirectional Sync with Architecture**: When creating or transitioning an ADR, you **MUST** update the ADR Registry table in `docs/03-architecture.md`.
+- Only create an ADR for significant, architecturally consequential decisions. Do NOT create ADRs for trivial CRUD or routine bug fixes.
+- Immediately after creating or updating the ADR, you **MUST STOP** and yield control back to the user for review.
 
 ---
 
 ## Target File & Master Template
 
 - Target File: `<project-root>/docs/adr/ADR-[PROJECT]-[NUMBER]-[title].md`
+- Master Architecture Document: `<project-root>/docs/03-architecture.md`
 - Master Template: `resources/template.md` (or `templates/adr.template.md`)
 - Standards: **MADR 3.0.0 (Markdown Architectural Decision Records)** and **ISO/IEC/IEEE 42010**
 
@@ -31,9 +33,11 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating an indivi
 
 ## Execution Workflow
 
-### Step 1: Decision Numbering & Status
-1. Check existing ADR files in `<project-root>/docs/adr/` to determine the next sequential number (e.g., `0002` or `ADR-CORE-002`).
-2. Identify the status: `PROPOSED`, `ACCEPTED`, `SUPERSEDED`, or `DEPRECATED`.
+### Step 1: Decision Framing & Trade-Off Discussion (DEFAULT)
+1. Frame the single architectural decision question (e.g., *"Choice of primary database"* or *"Choice of asynchronous message broker"*).
+2. Present 2-3 viable alternatives with explicit Pros, Cons, and preliminary Y-Statement in chat.
+3. Check existing ADR files in `<project-root>/docs/adr/` to determine the next sequential number (e.g., `ADR-0002` or `ADR-CORE-002`).
+4. **STOP and wait for user confirmation** unless the user explicitly provided the chosen option and rationale in the prompt.
 
 ### Step 2: Content Generation
 Load `resources/template.md` and populate:
@@ -52,7 +56,13 @@ Load `resources/template.md` and populate:
    - Explicit triggers for re-evaluating the decision (e.g., traffic exceeds 50,000 req/s, monthly cloud cost exceeds $2,000).
 8. **Related Decisions**: Link to superseded or complementary ADRs.
 
-### Step 3: Verification & Stop
-1. Verify the ADR file is saved in `<project-root>/docs/adr/`.
+### Step 3: Bidirectional Sync with System Architecture
+1. Read `<project-root>/docs/03-architecture.md`.
+2. Locate Section 9.1 (Index of Governing ADRs / ADR Registry).
+3. Append or update the entry for this ADR (ID, Title, Link, Status, Decision summary).
+4. If this ADR introduces a new component, store, or broker (e.g., adding Redis or Kafka), check whether Section 2 (Tech Matrix) and Section 4 (C4 Diagrams) in `docs/03-architecture.md` need adjustment, and prompt the user to authorize updating the diagrams.
+
+### Step 4: Verification & Stop
+1. Verify the ADR file is saved in `<project-root>/docs/adr/` and `docs/03-architecture.md` registry is updated.
 2. Output a brief summary including the Y-Statement and chosen option.
-3. **STOP** and instruct the user: *"ADR created and saved to `docs/adr/`. Please review and confirm the architectural decision."*
+3. **STOP** and inform the user that the ADR has been created and registered in `docs/03-architecture.md`, prompting them to review and confirm. Always respond naturally in the user's conversational language (e.g., Vietnamese if chatting in Vietnamese).

@@ -1,6 +1,6 @@
 # Pragmatic Software Design: Spec & Architecture First AI Skill Suite
 
-> A rigorous yet pragmatic Software Engineering & Architecture skill suite for Agentic AI (Antigravity & Gemini CLI, Claude Code, Cursor, Copilot). Eliminates "vibe coding" through 10 discrete, human-in-the-loop skills (`/prag-*`) that bridge enterprise-grade rigor (BRD, SRS, Utility Tree, ADD, SAD, API Contracts, DBDD, ADR) with fast developer velocity.
+> A rigorous yet pragmatic Software Engineering & Architecture skill suite for Agentic AI (Antigravity & Gemini CLI, Claude Code, Cursor, Copilot). Eliminates "vibe coding" through 11 discrete, human-in-the-loop skills (`/prag-*`) that bridge enterprise-grade rigor (BRD, SRS, Utility Tree, ADD, SAD, API Contracts, DBDD, ADR) with fast developer velocity.
 
 ---
 
@@ -29,10 +29,10 @@
 
 | Enterprise Standard | Engineering Purpose | Mapped Lean Artifact | What Is Preserved & Compressed |
 | :--- | :--- | :--- | :--- |
-| **Constitution** | Engineering principles, quality gates & stack rules | `constitution.md` | 7 non-negotiable articles, stack specialization, zero secrets, structured logging, 4-tier layer boundary. |
+| **Constitution** | Engineering principles, quality gates & stack rules | `docs/constitution.md` | 7 non-negotiable articles, stack specialization, zero secrets, structured logging, 4-tier layer boundary. |
 | **BRD** *(CMMI-DEV v2.0 / ISO 29148)* | Business objectives, scope boundaries, rules & traceability | `docs/01-brd.md` | Measurable Objectives (`BO-xxx`), In/Out Scope, RACI Matrix, AS-IS vs TO-BE, Business Rules (`BU-R-xxx`), and Bidirectional Traceability Matrix. |
 | **SRS** *(ISO/IEC/IEEE 29148 / IEEE 830)* | Functional requirements, system behavior, data retention | `docs/02-srs.md` | Formal requirements written in **EARS Syntax** (Ubiquitous, Event, State, Error, Optional), external interfaces, state transitions. |
-| **Utility Tree** *(ATAM)* | Quantifying quality attributes (Latency, Scale, Security) | `docs/02-srs.md` | **Quality Attribute Scenarios Matrix** with measurable Stimulus $\rightarrow$ Response targets and Priority. |
+| **Utility Tree** *(ATAM)* | Quantifying quality attributes (Latency, Scale, Security) | `docs/02-srs.md` | **Quality Attribute Scenarios Matrix** with measurable Stimulus -> Response targets and Priority. |
 | **ADD** *(Attribute-Driven Design)* | Selecting architectural tactics to satisfy NFRs | `docs/03-architecture.md` | **Tactics Mapping Table** linking High-priority scenarios directly to proven patterns (Cache-aside, Outbox, Circuit Breaker). |
 | **SAD** *(Software Architecture Doc)* | System views, components, layering | `docs/03-architecture.md` | **Mermaid C4 Diagrams** (Context & Container), 4-tier layer mapping, Complexity Tracking. |
 | **API Contract** *(OpenAPI 3.1)* | RESTful contracts, DTO schemas, error envelopes | `docs/04-api.md` | Endpoint definitions, request/response JSON schemas, RFC 7807 error format, custom error code dictionary, ETag concurrency, deprecation lifecycle. |
@@ -44,12 +44,12 @@
 
 ## 3. Directory Layout (First-Class `docs/`)
 
-All architecture artifacts live directly in visible `docs/` and root `constitution.md`. They are first-class citizens intended for human review on GitHub/GitLab:
+All architecture artifacts live directly in the visible `docs/` directory. The root folder remains pristine and clean:
 
 ```text
 <project-root>/
-├── constitution.md           # Engineering principles & non-negotiable quality gates
 └── docs/
+    ├── constitution.md       # Engineering principles & non-negotiable quality gates
     ├── 00-pipeline.md        # Project Engineering Pipeline & Governance Dashboard (State Machine & Gates)
     ├── 01-brd.md             # Business Requirements Document (SEI CMMI-DEV v2.0 / ISO 29148)
     ├── 02-srs.md             # Software Requirements Specification (ISO 29148 / IEEE 830 / EARS / Utility Tree)
@@ -58,7 +58,8 @@ All architecture artifacts live directly in visible `docs/` and root `constituti
     ├── 05-database.md        # Database Design Document (Mermaid ERD + DBDD Physical Data Dictionary)
     ├── 06-tasks.md           # Phased execution checklist with [P] parallel flags & 6-point DoD
     └── adr/                  # Architectural Decision Records (MADR 3.0 format)
-        └── 0001-initial-tech-stack.md
+        ├── ADR-0001-architecture-pattern.md
+        └── ADR-0002-primary-database.md
 ```
 
 ---
@@ -82,11 +83,13 @@ pragmatic-software-design/
 │
 ├── references/                          # Tactical reference guides
 │   ├── clarification-guide.md
+│   ├── demo-scenario.md                 # Real-world simulation walkthrough (Go/Postgres/RabbitMQ)
 │   ├── ears-syntax.md
+│   ├── milestone-breakdown.md           # Master Section Stepper & milestone protocol
 │   └── quality-tactics.md
 │
 ├── skills/                              # 11 discrete Antigravity / Gemini skills
-│   ├── prag-constitution/              # /prag-constitution -> constitution.md & 00-pipeline.md
+│   ├── prag-constitution/              # /prag-constitution -> docs/constitution.md & 00-pipeline.md
 │   ├── prag-clarify/                   # /prag-clarify -> Interactive ambiguity elicitation
 │   ├── prag-status/                    # /prag-status -> Inspect & approve pipeline stages
 │   ├── prag-brd/                       # /prag-brd -> docs/01-brd.md
@@ -111,7 +114,7 @@ Running an unbroken "full pipeline from A to Z" is prohibited. Each skill execut
 
 | Skill Command | Primary Target | Standard / Framework | Gate Action |
 | :--- | :--- | :--- | :--- |
-| `/prag-constitution` | `constitution.md` | 7 Core Articles, Stack conventions, Init Pipeline | **STOPS** for review |
+| `/prag-constitution` | `docs/constitution.md` | 7 Core Articles, Stack conventions, Init Pipeline | **STOPS** for review |
 | `/prag-clarify` | Chat / Clarifications Log | 6 Ambiguity Dimensions (1 question at a time) | Waits for response |
 | `/prag-status` | `docs/00-pipeline.md` | Dashboard inspection & human stage sign-off | Unlocks next stage |
 | `/prag-brd` | `docs/01-brd.md` | CMMI-DEV v2.0 (RD/REQM), ISO 29148, SMART BOs | **STOPS** for review |
@@ -122,6 +125,13 @@ Running an unbroken "full pipeline from A to Z" is prohibited. Each skill execut
 | `/prag-tasks` | `docs/06-tasks.md` | Phased `[P]` breakdown, 6-Point DoD, Blocking Gate | **STOPS** for review |
 | `/prag-implement` | Source Code | Interactive Scope Gate, Test-First, Race Detection | Confirms scope before code |
 | `/prag-adr` | `docs/adr/ADR-xxx.md` | MADR 3.0.0, ISO 42010, Olaf Zimmermann Y-Statement | **STOPS** for review |
+
+### 5.1 Collaborative Discussion-First Protocol (No Auto-Dumping)
+Unlike machine-centric tools that immediately dump entire documents into context, Pragmatic Design operates as an interactive engineering session between human and AI:
+- **Default Mode (Collaborative Stepper)**: When a skill is invoked, the AI does **NOT** write the entire document at once. It guides the engineer milestone by milestone, debating trade-offs and drafting options in chat. It writes or updates the document **only upon explicit user command** (*"viết doc phần này"*, *"chốt"*, *"save section"*).
+- **Fast-Track Override**: If the user explicitly asks to generate the whole document at once (*"gen cả file docs luôn đi"*, *"generate full doc at once"*), the AI produces the complete document in a single run.
+- **In-Place Canonical Editing**: All updates are written directly to canonical files (`docs/01-brd.md`, etc.). Numbered version files (`brd-v1.md`, `brd-v2.md`) and version subfolders (`1-brd/`) are prohibited. Git manages historical revisions.
+- **Surgical Maintenance**: Minor tweaks (adding a field, adjusting an index) are handled via standard chat prompts without re-invoking the ceremony of the skill. Full skill re-runs are reserved for major architectural pivots.
 
 ---
 
@@ -150,7 +160,7 @@ The framework strictly enforces universal engineering laws and 4-tier layered ar
 ## 8. Installation & Setup
 
 ### Global Installation (Antigravity & Gemini CLI)
-Run the automated installer script to symlink all 10 skills into `~/.gemini/config/skills/`:
+Run the automated installer script to symlink all 11 skills into `~/.gemini/config/skills/`:
 
 ```bash
 cd pragmatic-software-design

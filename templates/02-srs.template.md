@@ -26,6 +26,37 @@
 
 ---
 
+## Table of Contents
+- [1. System Overview & Scope](#1-system-overview--scope)
+  - [1.1 Product Perspective & Context](#11-product-perspective--context)
+  - [1.2 System Boundary & Responsibility](#12-system-boundary--responsibility)
+- [2. External Interface Requirements](#2-external-interface-requirements)
+  - [2.1 User Interfaces (UI / UX / CLI Expectations)](#21-user-interfaces-ui--ux--cli-expectations)
+  - [2.2 Software & Third-Party Interfaces](#22-software--third-party-interfaces)
+  - [2.3 Communications Protocols](#23-communications-protocols)
+- [3. Domain Model & State Machine Lifecycles](#3-domain-model--state-machine-lifecycles)
+  - [3.1 Core Domain Entities & Attributes](#31-core-domain-entities--attributes)
+  - [3.2 State Transition Matrix (State Machine)](#32-state-transition-matrix-state-machine)
+- [4. System Use Cases & Scenario Specifications (UC)](#4-system-use-cases--scenario-specifications-uc)
+  - [4.1 Use Case Catalog](#41-use-case-catalog)
+  - [4.2 Detailed Use Case Specifications](#42-detailed-use-case-specifications)
+- [5. Functional Requirements (EARS Syntax & I/O Contracts)](#5-functional-requirements-ears-syntax--io-contracts)
+  - [5.1 Ubiquitous Requirements](#51-ubiquitous-requirements)
+  - [5.2 Event-Driven Requirements](#52-event-driven-requirements)
+  - [5.3 State-Driven Requirements](#53-state-driven-requirements)
+  - [5.4 Unwanted Behavior & Error Handling](#54-unwanted-behavior--error-handling)
+  - [5.5 Optional Feature Requirements](#55-optional-feature-requirements)
+- [6. Non-Functional Requirements (ATAM Utility Tree Matrix)](#6-non-functional-requirements-atam-utility-tree-matrix)
+- [7. Data Requirements & Retention Policies](#7-data-requirements--retention-policies)
+  - [7.1 Volume & Sizing Assumptions](#71-volume--sizing-assumptions)
+  - [7.2 Data Retention & Purge Policies](#72-data-retention--purge-policies)
+- [8. Verification & Validation Framework (CMMI Standards)](#8-verification--validation-framework-cmmi-standards)
+- [9. Requirements Traceability Matrix & Clarifications](#9-requirements-traceability-matrix--clarifications)
+  - [9.1 Bidirectional Traceability Matrix (CMMI REQM Standard)](#91-bidirectional-traceability-matrix-cmmi-reqm-standard)
+  - [9.2 Clarifications Log](#92-clarifications-log)
+
+---
+
 ## 1. System Overview & Scope
 
 ### 1.1 Product Perspective & Context
@@ -85,12 +116,72 @@
 | `Draft` or `PendingPayment` | User cancels order | `Cancelled` | Cancellation window < 24 hours |
 | `Cancelled` | *Any trigger* | **FORBIDDEN** | Terminal state; no transitions permitted |
 
----
-
-## 4. Functional Requirements (EARS Syntax & I/O Contracts)
+## 4. System Use Cases & Scenario Specifications (UC)
 
 <!--
-  Every functional requirement MUST adhere to one of the 5 canonical EARS patterns:
+  Use Cases bridge high-level User Stories (US in BRD) with atomic Functional Requirements (EARS).
+  Every Use Case specifies actor interactions, invariants, happy paths, and error branches.
+-->
+
+### 4.1 Use Case Catalog
+
+| UC ID | Use Case Title | Primary Actor | Derived From | Priority | Scenario Type |
+| :---: | :--- | :--- | :---: | :---: | :--- |
+| **UC-01** | [e.g., User Authentication & Session Establishment] | [e.g., Registered User] | `US-01` | P1 | Onboarding / Auth |
+| **UC-02** | [e.g., Place and Settle Order (Happy Path)] | [e.g., Customer] | `US-02` | P1 | Core Transaction |
+| **UC-03** | [e.g., Handle Payment Timeout & Inventory Compensation] | [e.g., System Cron Worker] | `US-02` | P1 | Exception & Recovery |
+| **UC-04** | [e.g., Order Cancellation & Refund Request] | [e.g., Customer] | `US-03` | P2 | Post-Order Management |
+
+### 4.2 Detailed Use Case Specifications
+
+#### UC-01: [Use Case Title]
+*   **Traceability**: Derived from `US-01`
+*   **Primary Actor**: [e.g., Customer / API Client]
+*   **Secondary Actors**: [e.g., Payment Gateway, Notification Service]
+*   **Preconditions**:
+    1. [Condition 1: e.g., User is authenticated with valid session]
+    2. [Condition 2: e.g., Shopping cart contains >= 1 valid item]
+*   **Postconditions**:
+    *   *Success Guarantee*: [State mutation on success: e.g., Order status set to `PendingPayment`, inventory reserved]
+    *   *Failure Guarantee*: [Rollback guarantees: e.g., Cart remains intact, no inventory locks held]
+*   **Main Success Scenario (Happy Path)**:
+    1. Actor submits [action with parameters].
+    2. System validates [inputs, state, business rules `BU-R-xxx`].
+    3. System interacts with [Secondary Actor] to perform [operation].
+    4. System mutates internal state to [Next State] and records audit event.
+    5. System returns [success payload / confirmation] to Actor.
+*   **Extensions / Alternative & Exception Flows**:
+    *   **2a. [Validation or Business Rule Violation]**:
+        *   1. System rejects action without mutating persistent state.
+        *   2. System returns specific error code (`4xx`) and halts flow.
+    *   **3a. [Secondary Actor Failure or Timeout]**:
+        *   1. System trips circuit breaker or queues retry task.
+        *   2. System executes compensation rollback and notifies Actor.
+
+#### UC-02: [Secondary Use Case Title]
+*   **Traceability**: Derived from `US-02`
+*   **Primary Actor**: [Actor]
+*   **Secondary Actors**: [External Service]
+*   **Preconditions**:
+    1. [Precondition]
+*   **Postconditions**:
+    *   *Success Guarantee*: [Outcome]
+    *   *Failure Guarantee*: [Rollback]
+*   **Main Success Scenario (Happy Path)**:
+    1. Actor initiates [action].
+    2. System processes [logic].
+    3. System confirms [outcome].
+*   **Extensions / Alternative & Exception Flows**:
+    *   **2a. [Exception condition]**:
+        *   1. System executes fallback.
+
+---
+
+## 5. Functional Requirements (EARS Syntax & I/O Contracts)
+
+<!--
+  Every functional requirement MUST derive from a specific step or failure branch in Section 4 (Use Cases).
+  Requirements MUST adhere to one of the 5 canonical EARS patterns:
   1. Ubiquitous: The <system> shall <action>
   2. Event-driven: When <trigger>, the <system> shall <action>
   3. State-driven: While <state>, the <system> shall <action>
@@ -100,59 +191,69 @@
   Each requirement is paired with compact Input/Output contracts and a CMMI Verification Method (T/D/I/A).
 -->
 
-### 4.1 Ubiquitous Requirements
+### 5.1 Ubiquitous Requirements
 *   **FR-UBI-001**: The System shall encrypt all persistent user credentials using Argon2id or bcrypt with cost factor 12.
+    *   *Traceability*: Cross-cutting constraint
     *   *Input*: Plaintext password string, salt
     *   *Output*: Cryptographic password hash string
     *   *Verification*: `T` (Automated Unit Test)
 *   **FR-UBI-002**: The System shall emit structured JSON logs for all state-mutating transactions.
+    *   *Traceability*: Cross-cutting constraint
     *   *Input*: Transaction context, user ID, mutation payload
     *   *Output*: Structured JSON log entry emitted to standard output
     *   *Verification*: `T, I` (Log Assertion & Code Inspection)
 
-### 4.2 Event-Driven Requirements
+### 5.2 Event-Driven Requirements
 *   **FR-EVT-001**: When a user submits a valid login request, the System shall issue a cryptographically signed JWT access token (15-minute TTL) and refresh token (7-day TTL).
+    *   *Traceability*: Derived from `UC-01`
     *   *Input*: `email`, `password`
     *   *Output*: HTTP 200 with `{ access_token, refresh_token, token_type, expires_in }`
     *   *Verification*: `T` (Integration Test)
 *   **FR-EVT-002**: When a customer confirms an order, the System shall deduct the corresponding product inventory in an atomic database transaction and transition the order to `PendingPayment`.
+    *   *Traceability*: Derived from `UC-02`
     *   *Input*: `order_id`, item list `[{ product_id, quantity }]`
     *   *Output*: Updated `inventory.stock_quantity`, `order.status = PendingPayment`, event `order.created`
     *   *Verification*: `T` (Transactional Concurrency Test)
 
-### 4.3 State-Driven Requirements
+### 5.3 State-Driven Requirements
 *   **FR-STA-001**: While the system database connection is lost, the API Gateway shall reject incoming state-mutating requests with HTTP 503 and a Retry-After header.
+    *   *Traceability*: Derived from `UC-02`, `UC-03`
     *   *Input*: Incoming HTTP mutation request during database disconnection
     *   *Output*: HTTP 503 Service Unavailable, header `Retry-After: 30`
     *   *Verification*: `T` (Chaos / Disconnection Integration Test)
 *   **FR-STA-002**: While an account is in `Suspended` status, the Authentication Service shall reject all access tokens issued to that account.
+    *   *Traceability*: Derived from `UC-01`
     *   *Input*: Request with Bearer token belonging to a suspended account
     *   *Output*: HTTP 403 Forbidden with `{ error: { code: "ACCOUNT_SUSPENDED" } }`
     *   *Verification*: `T` (Automated Security Test)
 
-### 4.4 Unwanted Behavior & Error Handling
+### 5.4 Unwanted Behavior & Error Handling
 *   **FR-ERR-001**: If a user submits an expired or revoked refresh token, then the System shall invalidate the session and return HTTP 401 Unauthorized.
+    *   *Traceability*: Derived from `UC-01` (Exception Flow 2a)
     *   *Input*: Expired or revoked refresh token
     *   *Output*: HTTP 401 Unauthorized, session revoked from storage
     *   *Verification*: `T` (Automated Unit Test)
 *   **FR-ERR-002**: If checkout is attempted on an item with insufficient stock, then the System shall reject the order and return HTTP 409 Conflict with the current available quantity.
+    *   *Traceability*: Derived from `UC-02` (Alternative Flow 2a)
     *   *Input*: Checkout request where `requested_quantity > stock_quantity`
     *   *Output*: HTTP 409 Conflict with `{ error: { code: "INSUFFICIENT_STOCK", available: N } }`
     *   *Verification*: `T` (Automated Integration Test)
 *   **FR-ERR-003**: If the client exceeds 100 requests per minute from a single IP, then the System shall throttle requests with HTTP 429 Too Many Requests.
+    *   *Traceability*: Derived from `UC-01`, `UC-02` (Cross-cutting rate limiting)
     *   *Input*: > 100 requests within 60 seconds from same IP
     *   *Output*: HTTP 429 Too Many Requests, header `X-RateLimit-Reset`
     *   *Verification*: `T, A` (Rate Limiter Benchmark Test)
 
-### 4.5 Optional Feature Requirements
+### 5.5 Optional Feature Requirements
 *   **FR-OPT-001**: Where Redis caching is enabled, the Query Service shall cache public catalog read operations with a 300-second TTL.
+    *   *Traceability*: Optional optimization
     *   *Input*: `GET /api/v1/catalog`, cache feature flag enabled
     *   *Output*: Catalog data served from memory cache; response header `X-Cache: HIT`
     *   *Verification*: `T, A` (Benchmark / Latency Profiling)
 
 ---
 
-## 5. Non-Functional Requirements (ATAM Utility Tree Matrix)
+## 6. Non-Functional Requirements (ATAM Utility Tree Matrix)
 
 <!--
   Quantifiable system quality attributes. Avoid vague adjectives; specify measurable Stimulus & Response.
@@ -171,21 +272,21 @@
 
 ---
 
-## 6. Data Requirements & Retention Policies
+## 7. Data Requirements & Retention Policies
 
-### 6.1 Volume & Sizing Assumptions
+### 7.1 Volume & Sizing Assumptions
 *   **Initial Data Volume**: [e.g., 50,000 active users, 500,000 orders/year]
 *   **Growth Rate**: [e.g., Projected 15% month-over-month data growth]
 *   **Peak Throughput**: [e.g., 1,200 write operations/second during promotional peak]
 
-### 6.2 Data Retention & Purge Policies
+### 7.2 Data Retention & Purge Policies
 *   **Operational Transaction Data**: Retained online in primary database for 24 months.
 *   **Audit Logs**: Retained in immutable compressed cold storage for 7 years (compliance requirement).
 *   **Session & Temporary Tokens**: Automatically purged via TTL 24 hours post-expiry.
 
 ---
 
-## 7. Verification & Validation Framework (CMMI Standards)
+## 8. Verification & Validation Framework (CMMI Standards)
 
 Every requirement in this specification MUST be verifiable using one or more of the 4 standard CMMI verification methods:
 
@@ -196,22 +297,22 @@ Every requirement in this specification MUST be verifiable using one or more of 
 
 ---
 
-## 8. Requirements Traceability Matrix & Clarifications
+## 9. Requirements Traceability Matrix & Clarifications
 
-### 8.1 Bidirectional Traceability Matrix (CMMI REQM Standard)
+### 9.1 Bidirectional Traceability Matrix (CMMI REQM Standard)
 <!--
   Guarantees 100% two-way traceability:
-  Business Objective (BO) -> Business Requirement (BR) -> User Story (US) -> System FR (EARS) -> NFR -> Verification Method
+  Business Objective (BO) -> Business Requirement (BR) -> User Story (US) -> System Use Case (UC) -> System FR (EARS) -> NFR -> Verification Method
 -->
 
-| Objective ID (BO) | Business Reqs (BR) | User Stories (US) | System Functional Reqs (EARS) | Non-Functional Reqs (NFR) | Verification Method |
-| :--- | :--- | :--- | :--- | :--- | :---: |
-| **BO-01** (Zero Licensing) | **BR-06** (Self-hosted) | All Stories | `FR-UBI-001`, `FR-UBI-002` | Zero-Secrets, Observability | **I, T** |
-| **BO-02** (Rapid Detection) | **BR-01**, **BR-02**, **BR-03** | **US-01** (Onboarding) | `FR-EVT-001`, `FR-ERR-001` | Performance (P99 < 50ms) | **T, A** |
-| **BO-03** (Decision Velocity) | **BR-04** (Insight extraction) | **US-02** (Checkout) | `FR-EVT-002`, `FR-ERR-002` | Fault Tolerance (Circuit Breaker) | **T** |
-| **BO-04** (Data Integrity) | **BR-05** (Deduplication) | **US-03** (History) | `FR-STA-001`, `FR-STA-002` | Availability (RPO = 0) | **T, D** |
+| Objective ID (BO) | Business Reqs (BR) | User Stories (US) | System Use Case (UC) | System Functional Reqs (EARS) | Non-Functional Reqs (NFR) | Verification Method |
+| :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| **BO-01** (Zero Licensing) | **BR-06** (Self-hosted) | All Stories | N/A (Cross-cutting) | `FR-UBI-001`, `FR-UBI-002` | Zero-Secrets, Observability | **I, T** |
+| **BO-02** (Rapid Detection) | **BR-01**, **BR-02**, **BR-03** | **US-01** (Onboarding) | **UC-01** | `FR-EVT-001`, `FR-ERR-001` | Performance (P99 < 50ms) | **T, A** |
+| **BO-03** (Decision Velocity) | **BR-04** (Insight extraction) | **US-02** (Checkout) | **UC-02**, **UC-03** | `FR-EVT-002`, `FR-ERR-002` | Fault Tolerance (Circuit Breaker) | **T** |
+| **BO-04** (Data Integrity) | **BR-05** (Deduplication) | **US-03** (History) | **UC-04** | `FR-STA-001`, `FR-STA-002` | Availability (RPO = 0) | **T, D** |
 
-### 8.2 Clarifications Log
+### 9.2 Clarifications Log
 *   **Session [YYYY-MM-DD]**:
     *   *Q*: [Clarification question asked during elicitation]?  
-    *   *A*: [User confirmed decision] $\rightarrow$ *Integrated into Section [X]*
+    *   *A*: [User confirmed decision] -> *Integrated into Section [X]*

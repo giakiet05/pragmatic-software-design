@@ -28,6 +28,20 @@
 
 ---
 
+## Table of Contents
+- [1. Context and Problem Statement](#1-context-and-problem-statement)
+- [2. Decision Drivers (Key Evaluation Criteria)](#2-decision-drivers-key-evaluation-criteria)
+- [3. Considered Options & Trade-off Analysis](#3-considered-options--trade-off-analysis)
+- [4. Decision Outcome & Y-Statement](#4-decision-outcome--y-statement)
+  - [4.1 The Y-Statement](#41-the-y-statement)
+  - [4.2 Detailed Consequences & Mitigation](#42-detailed-consequences--mitigation)
+- [5. Validation Criteria & Re-evaluation Triggers](#5-validation-criteria--re-evaluation-triggers)
+  - [5.1 Validation Method](#51-validation-method)
+  - [5.2 Re-evaluation Triggers](#52-re-evaluation-triggers-circuit-breaker-for-decisions)
+- [6. Implementation Notes & Governing Links](#6-implementation-notes--governing-links)
+
+---
+
 ## 1. Context and Problem Statement
 <!--
   What is the specific architectural dilemma, technical requirement, or constraint we are addressing?

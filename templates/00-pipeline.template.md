@@ -12,7 +12,15 @@
 > **Target Tech Stack**: [Go 1.24+ | Python 3.12+ | TypeScript / Node.js LTS | TBD - To be selected in Stage 3 Architecture]  
 > **Project Profile**: [Enterprise Core | Lean Microservice | CLI Tool / Worker / PoC]  
 > **Last Synchronized**: [YYYY-MM-DD HH:MM:SS]  
-> **Lead Architect / Approver**: [ENGINEER NAME / @giakiet05]  
+> **Lead Architect / Approver**: [ENGINEER NAME / @username]  
+
+---
+
+## Table of Contents
+- [1. Pipeline State Machine & Transition Rules](#1-pipeline-state-machine--transition-rules)
+- [2. Master Governance Dashboard](#2-master-governance-dashboard)
+- [3. Pre-Execution Gate Verification Protocol](#3-pre-execution-gate-verification-protocol)
+- [4. Formal Sign-off & Bypass Audit Trail](#4-formal-sign-off--bypass-audit-trail)
 
 ---
 
@@ -44,9 +52,9 @@ To eliminate "vibe coding" and enforce strict **Architecture-First** engineering
 
 | Stage | Artifact Name | Primary Target Path | Prerequisite Stage | Current Status | Sign-off Date | Approved By | Gate Enforcement Rules |
 | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **0** | **Constitution** | `constitution.md` | None | `[APPROVED/READY]` | [YYYY-MM-DD] | [Engineer] | 7 Non-Negotiable Articles ratified; Stack tooling initialized. |
+| **0** | **Constitution** | `docs/constitution.md` | None | `[APPROVED/READY]` | [YYYY-MM-DD] | [Engineer] | 7 Non-Negotiable Articles ratified; Stack tooling initialized. |
 | **1** | **Business Requirements (BRD)** | `docs/01-brd.md` | Stage 0 | `[LOCKED/APPROVED]` | [YYYY-MM-DD] | [Engineer] | SMART BOs, Scope (In/Out), RACI, AS-IS vs TO-BE, Business Rules. |
-| **2** | **Software Requirements (SRS)** | `docs/02-srs.md` | Stage 1 | `[LOCKED/APPROVED]` | [YYYY-MM-DD] | [Engineer] | EARS Syntax, I/O Contracts, ATAM Utility Tree (H,H) Scenarios. |
+| **2** | **Software Requirements (SRS)** | `docs/02-srs.md` | Stage 1 | `[LOCKED/APPROVED]` | [YYYY-MM-DD] | [Engineer] | Use Cases (UC), EARS Syntax, I/O Contracts, ATAM Utility Tree (H,H). |
 | **3** | **System Architecture (SAD)** | `docs/03-architecture.md` | Stage 2 | `[LOCKED/APPROVED]` | [YYYY-MM-DD] | [Engineer] | Inline C4 Diagrams, ADD Tactics, Capacity Sizing, ADR-0001. |
 | **4** | **API Specification** | `docs/04-api.md` | Stage 3 | `[LOCKED/APPROVED/N/A]` | [YYYY-MM-DD] | [Engineer] | OpenAPI 3.1, RFC 7807 Error Dictionary, ETag Concurrency. (Or N/A for CLI/Worker). |
 | **5** | **Database Design (DBDD)** | `docs/05-database.md` | Stage 4 | `[LOCKED/APPROVED/N/A]` | [YYYY-MM-DD] | [Engineer] | Inline Mermaid ERD, DBDD Data Dictionary, ESR Indexing. (Or N/A for Stateless). |
@@ -80,10 +88,10 @@ Step 3: Post-Generation Hook:
 
 ## 4. Formal Sign-off & Bypass Audit Trail
 
-Record every state transition (`IN_REVIEW` $\rightarrow$ `APPROVED` or `LOCKED` $\rightarrow$ `N/A`) in this log:
+Record every state transition (`IN_REVIEW` -> `APPROVED` or `LOCKED` -> `N/A`) in this log:
 
 | Log ID | Stage | Artifact | Transition | Timestamp | Approver | Verification Evidence / Technical Rationale |
 | :--- | :---: | :--- | :---: | :--- | :--- | :--- |
-| `SIG-001` | 0 | `constitution.md` | `IN_REVIEW` $\rightarrow$ `APPROVED` | [Timestamp] | [Approver] | Ratified 7 core articles for Go 1.24+ runtime. |
-| `SIG-002` | 1 | `docs/01-brd.md` | `IN_REVIEW` $\rightarrow$ `APPROVED` | [Timestamp] | [Approver] | Reviewed SMART BOs, scope boundary, and business rules. |
-| `SIG-003` | 4 | `docs/04-api.md` | `LOCKED` $\rightarrow$ `N/A` | [Timestamp] | [Approver] | Bypassed: System is an asynchronous Kafka consumer with no public HTTP endpoints. |
+| `SIG-001` | 0 | `docs/constitution.md` | `IN_REVIEW` -> `APPROVED` | [Timestamp] | [Approver] | Ratified 7 core articles for Go 1.24+ runtime. |
+| `SIG-002` | 1 | `docs/01-brd.md` | `IN_REVIEW` -> `APPROVED` | [Timestamp] | [Approver] | Reviewed SMART BOs, scope boundary, and business rules. |
+| `SIG-003` | 4 | `docs/04-api.md` | `LOCKED` -> `N/A` | [Timestamp] | [Approver] | Bypassed: System is an asynchronous Kafka consumer with no public HTTP endpoints. |

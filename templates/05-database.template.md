@@ -28,6 +28,32 @@
 
 ---
 
+## Table of Contents
+- [1. Database Overview, Engine Configuration & Connection Pooling](#1-database-overview-engine-configuration--connection-pooling)
+  - [1.1 RDBMS Engine & Instance Parameters](#11-rdbms-engine--instance-parameters)
+  - [1.2 Connection Pooling & Query Protection Limits](#12-connection-pooling--query-protection-limits)
+  - [1.3 Naming Conventions](#13-naming-conventions)
+- [2. Logical Data Model (Mermaid ERD)](#2-logical-data-model-mermaid-erd)
+- [3. Physical Data Dictionary (Table Specifications)](#3-physical-data-dictionary-table-specifications)
+- [4. Transaction Isolation & Concurrency Locking Strategy](#4-transaction-isolation--concurrency-locking-strategy)
+  - [4.1 Isolation Levels](#41-isolation-levels)
+  - [4.2 Locking Strategy Comparison](#42-locking-strategy-comparison)
+- [5. Indexing & Query Optimization Strategy](#5-indexing--query-optimization-strategy)
+  - [5.1 Index Inventory (ESR Rule)](#51-index-inventory)
+- [6. Table Partitioning & Data Lifecycle (Hot / Warm / Cold)](#6-table-partitioning--data-lifecycle-hot--warm--cold)
+  - [6.1 Declarative Partitioning Specification](#61-declarative-partitioning-specification)
+  - [6.2 Data Retention & Tiering Policy](#62-data-retention--tiering-policy)
+- [7. Data Integrity, Cascade Rules & Constraints](#7-data-integrity-cascade-rules--constraints)
+  - [7.1 Foreign Key Cascade Rules](#71-foreign-key-cascade-rules)
+  - [7.2 Domain Check Constraints](#72-domain-check-constraints)
+  - [7.3 Soft Deletion vs Hard Deletion Protocol](#73-soft-deletion-vs-hard-deletion-protocol)
+- [8. Migration & Zero-Downtime Deployment Discipline](#8-migration--zero-downtime-deployment-discipline)
+  - [8.1 Migration File Conventions](#81-migration-file-conventions)
+  - [8.2 Production Migration Safety Checklist](#82-production-migration-safety-checklist)
+  - [8.3 Initial Seeding Baseline](#83-initial-seeding-baseline)
+
+---
+
 ## 1. Database Overview, Engine Configuration & Connection Pooling
 
 ### 1.1 RDBMS Engine & Instance Parameters
@@ -39,7 +65,7 @@
 To prevent database exhaustion during concurrent traffic spikes, the backend application connection pool (`pgxpool` for Go, `SQLAlchemy` for Python, `pg-pool` for Node) MUST adhere to these strict limits:
 
 *   **Max Open Connections (`max_open_conns`)**: Sized according to Little's Law:
-    $$\text{MaxConns} = \frac{\text{Target RPS} \times \text{Average Query Duration (seconds)}}{\text{App Instances}}$$
+    `MaxConns = (Target RPS * Average Query Duration in seconds) / App Instances`
     *(Default: 20-30 connections per instance; total across instances must stay below database `max_connections - 15`)*.
 *   **Max Idle Connections (`max_idle_conns`)**: Set to equal `max_open_conns / 2` to reduce connection churn.
 *   **Connection Max Lifetime (`conn_max_lifetime`)**: `30 minutes` (recycles connections to avoid backend memory leaks or stale TCP handles).
