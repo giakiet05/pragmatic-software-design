@@ -39,6 +39,7 @@ Before generating or modifying `docs/03-architecture.md`, execute this check:
 - Discrete ADR Directory: `<project-root>/docs/adr/`
 - Governance Dashboard: `<project-root>/docs/00-pipeline.md`
 - Master Template: `resources/template.md` (or `templates/03-architecture.template.md`)
+- Canonical Go Architecture Blueprint: `references/go-project-structure.md`
 - Tactics Reference: `resources/quality-tactics.md`
 - ADR Template: `templates/adr.template.md`
 - Standards: **ISO/IEC/IEEE 42010**, **SEI Attribute-Driven Design (ADD)**, and **C4 Model**
@@ -54,10 +55,16 @@ By default, **DO NOT** generate or write the entire architecture document in a s
    - **Architecture Discovery Gate (MANDATORY)**: Read `docs/constitution.md`, `01-brd.md`, and `02-srs.md`. Propose 2-3 architectural approaches (Modular Monolith vs Microservices) and candidates for core tech stack with trade-offs.
    - Establish non-negotiable technical constraints and SLA/SLO drivers.
    - **STOP and wait for user confirmation**. DO NOT write any files until the user chooses the architectural style and tech stack.
-2. **Milestone 2: Architecture Style, 4-Tier Layer Boundaries & Layout (Section 3)**:
-   - Establish strict 4-tier layer boundaries (`Router` -> `Controller` -> `Service` -> `Repository`), forbidden dependencies, and interface-driven decoupling.
-   - Author the unified directory layout tailored to the chosen runtime (e.g. Go: `cmd/`, `internal/{router,controller,service,repository,model}/`).
-   - STOP and confirm with user.
+2. **Milestone 2: Architecture Style, Boundary Rules & Directory Layout (Section 3)**:
+   - **Enforce Universal Invariants (All Languages & Domains)**:
+     - *Zero-Colocation Rule*: Entities (`model/`), DTOs (`dto/`), Handlers/Controllers (`handler/`), and Business Logic (`service/`) MUST NEVER be colocated in the same file or shared directory.
+     - *2-Model Boundary Discipline*: Dedicated transport DTOs protecting internal entities from mass-assignment and leaks.
+     - *Self-Describing Package Names*: Banned: `util`, `helper`, `common`, `platform`, `shared`, `misc`.
+     - *Repository Isolation*: Repositories represent atomic aggregate boundaries and MUST NEVER call other repositories.
+     - *Dependency Inversion*: Business logic depends on abstractions, never on low-level database drivers or external transport frameworks.
+   - **Go-Specific Architecture Paradigm**: For Go backends, ingest and align with `references/go-project-structure.md`. In Go, structural typing enables **Consumer-Driven Interfaces** (unexported interfaces declared at the consumer, concrete structs exported by producers). Note: Nominal languages (Java, C#, TypeScript) place interfaces in shared domain/ports packages instead.
+   - **Mandatory Collaborative Discussion Gate**: Present the planned directory layout to the user in chat. If recommending any project-specific adaptations to the canonical blueprint, explain the technical trade-offs.
+   - **STOP and wait for user confirmation**. Directory layout variations are permitted IF AND ONLY IF explicitly discussed and approved by the human engineer. DO NOT write Section 3 until the user approves the structure.
 3. **Milestone 3: Structural Views (C4 Model) (Section 4)**:
    - Structure Level 1 (System Context) and Level 2 (Container) diagrams using inline ````mermaid` blocks (Level 3 Component view selective).
    - STOP and confirm with user.

@@ -76,15 +76,15 @@
 *   **Standards**: [Specify error pattern: Go (`if err != nil` with `fmt.Errorf("%w")`) | Python (custom domain exceptions, strictly no bare `except:`) | TypeScript (typed `Result<T, E>` or custom Error classes)].
 *   **Exceptions**: None. Every error branch must be explicitly handled, logged, or propagated.
 
-### Article 5: Pragmatic Layered Architecture (KISS & YAGNI First)
-*   **Mandate**: The default structural model for all backend services is strictly **Layered Architecture (4 Tiers)**:
-    `Router` -> `Controller` -> `Service` -> `Repository`
-    *   **Router**: Route mapping, URL pattern matching, and middleware pipeline piping.
-    *   **Controller**: Request DTO binding, schema validation, HTTP response encoding, and status codes.
-    *   **Service**: Pure business logic, workflow coordination, domain rules, and invariant enforcement.
-    *   **Repository**: Data persistence, interface-driven SQL queries, and transaction management.
-*   **Standards**: Interfaces must be defined at consumer boundaries (client-side of the dependency). Do not create single-implementation interfaces without clear testing or substitution requirements.
-*   **Exceptions**: Do NOT introduce premature abstractions, microservices, CQRS, or message brokers (Kafka/RabbitMQ) unless an explicit High-priority scenario in the Utility Tree mathematically justifies it (defended in the *Complexity Tracking Table*).
+### Article 5: Pragmatic Architecture & Universal Boundary Invariants
+*   **Mandate**: All codebase structures MUST preserve the 5 **Universal Boundary Invariants** regardless of programming language or domain:
+    1.  **Zero-Colocation Rule**: Entities (`model/`), Request/Response schemas (`dto/`), Handlers/Controllers (`handler/`), and Business Logic (`service/`) MUST NEVER be colocated in the same file or shared directory.
+    2.  **2-Model Boundary Discipline**: Transport DTOs strictly isolate public API contracts from internal database models, preventing mass-assignment vulnerabilities and sensitive field leakage.
+    3.  **Self-Describing Package Names**: Directory/package names must unambiguously declare their single responsibility. Catch-all junk drawers (`util`, `helper`, `common`, `platform`, `shared`, `misc`) are strictly banned.
+    4.  **Repository Isolation**: Repositories represent atomic aggregate boundaries and MUST NEVER call other repositories. Inter-entity coordination belongs strictly to the Service/Orchestrator layer.
+    5.  **Dependency Inversion**: Business logic depends on abstractions, never on low-level database drivers or external transport frameworks.
+*   **Go-Specific Standards**: For Go backend services, structural typing uniquely enables **Consumer-Driven Interfaces** (unexported interfaces owned by consumer packages, concrete structs exported by producers). The canonical reference layout is `references/go-project-structure.md` (Flat symmetry across `router`, `handler`, `service`, `repository`, `infra`, `model`, `dto`, `event`, `worker`, `logger`, `security`, `metrics`). Note: Nominal languages (Java, C#, TypeScript) place interfaces in shared domain/ports packages instead.
+*   **Exceptions**: Variations to directory layouts are permitted IF AND ONLY IF explicitly proposed, discussed with trade-offs, and approved by the human engineer during the Stage 3 (Architecture) design phase.
 
 ### Article 6: 12-Factor Configuration & Zero-Secrets Policy
 *   **Mandate**: All operational parameters (ports, database credentials, external URLs, timeouts) must be loaded strictly from **Environment Variables**. Hardcoding credentials, API tokens, internal IP addresses, or magic configuration constants directly in source code is strictly prohibited. The repository MUST maintain a sanitized `.env.example`. Actual `.env` files must be ignored by version control.
@@ -105,7 +105,7 @@ Before ANY implementation task is authorized, the feature plan MUST satisfy thes
 1.  **Gate 1 (Scope Gate)**: In-Scope and Out-of-Scope boundaries clearly defined in `docs/01-brd.md` and functional requirements mapped in `docs/02-srs.md`.
 2.  **Gate 2 (Quality Gate)**: Utility Tree scenarios in `docs/02-srs.md` quantified with concrete metrics (latency, RPS, recovery targets).
 3.  **Gate 3 (Model Gate)**: Data models rendered with Mermaid ERD in `docs/03-architecture.md` and primary/foreign keys designated.
-4.  **Gate 4 (Layering Gate)**: Code structure strictly conforms to `Router -> Controller -> Service -> Repository`.
+4.  **Gate 4 (Boundary & Layering Gate)**: Code structure strictly respects Universal Boundary Invariants (Zero-Colocation, 2-Model discipline, Repo isolation) and aligns with the approved directory layout in `docs/03-architecture.md`.
 5.  **Gate 5 (Complexity Gate)**: Any violation of Article 1 (new dependency) or Article 5 (added abstraction layer) must be justified in the *Complexity Tracking Table* in `docs/03-architecture.md`.
 
 ---

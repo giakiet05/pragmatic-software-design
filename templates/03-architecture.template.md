@@ -101,55 +101,56 @@ This architecture is driven by the Quality Attributes (NFRs) defined in `docs/02
 *   **Style**: [e.g., Modular Monolith / Pragmatic Layered Monolith / Event-Driven Microservices].
 *   **Rationale**: [Explain why this style was chosen over alternatives based on team size, domain complexity, and scalability stage].
 
-### 3.2 Strict 4-Tier Layering Invariants
-All codebase interactions MUST respect the strict unidirectional dependency flow:
-`Transport/Router` -> `Controller/Handler` -> `Service/Domain` -> `Repository/Adapter`.
+### 3.2 Pragmatic Layering & Boundary Invariants
+All codebase interactions MUST respect unidirectional dependency flow and the 5 **Universal Boundary Invariants**:
 
 ```text
 [HTTP / gRPC Client]
         │
         ▼
 ┌────────────────────────────────────────────────────────┐
-│ 1. Transport & Router Tier (internal/router)           │
-│    - URL routing, method validation, middleware chain  │
-│    - Invariant: Zero business logic, zero direct DB    │
+│ 1. Router Tier (internal/router)                       │
+│    - URL route registration, path groups, middleware   │
+│    - Invariant: Zero business logic, zero DTO parsing  │
 └───────────────────────┬────────────────────────────────┘
-                        │ Passes Request Context / Raw DTO
+                        │ Routes to
                         ▼
 ┌────────────────────────────────────────────────────────┐
-│ 2. Controller Tier (internal/controller)               │
-│    - DTO validation, HTTP status mapping, serialization│
-│    - Invariant: Calls Service interfaces only          │
+│ 2. Handler Tier (internal/handler)                     │
+│    - DTO deserialization, validation, status encoding  │
+│    - Invariant: Injects Service consumer interfaces    │
 └───────────────────────┬────────────────────────────────┘
-                        │ Calls Domain Workflows
+                        │ Passes Domain Entities / Parameters
                         ▼
 ┌────────────────────────────────────────────────────────┐
-│ 3. Service / Domain Tier (internal/service)            │
+│ 3. Service Tier (internal/service)                     │
 │    - Business invariants, transactions, orchestrations │
-│    - Invariant: Agnostic of HTTP/Transport protocols   │
-└───────────────────────┬────────────────────────────────┘
-                        │ Injects Repository Interfaces
-                        ▼
-┌────────────────────────────────────────────────────────┐
-│ 4. Repository Tier (internal/repository)               │
-│    - SQL queries, connection pools, schema mapping     │
-│    - Invariant: Zero business logic, zero HTTP context │
-└───────────────────────┬────────────────────────────────┘
-                        │ SQL / TCP
-                        ▼
-               [Database / Cache]
+│    - Invariant: Protocol-agnostic (zero HTTP/gRPC)     │
+└───────────┬────────────────────────────────────────────┘
+            │ Injects Consumer Interfaces
+            ├────────────────────────────────────────────┐
+            ▼                                            ▼
+┌────────────────────────────────────────┐   ┌────────────────────────────────────────┐
+│ 4. Repository Tier (internal/repository│   │ 5. Infrastructure Tier (internal/infra)│
+│    - Owned DB queries (Postgres/Redis) │   │    - 3rd-party APIs, SaaS, Mail, Cloud │
+│    - Invariant: Zero cross-repo calls  │   │    - Invariant: Isolated concrete SDKs │
+└────────────────────────────────────────┘   └────────────────────────────────────────┘
 ```
 
-### 3.3 Architectural Guardrails (Forbidden Dependencies)
-1.  **No Reverse Coupling**: Inner layers (`Service`, `Repository`) MUST NEVER import or reference outer layers (`Router`, `Controller`).
-2.  **No Bypass**: The `Controller` tier MUST NEVER call the `Repository` or Database directly, bypassing domain validation.
-3.  **Interface Segregation**: All cross-tier dependencies MUST depend on abstractions (interfaces/protocols) to ensure deterministic mockability during unit testing.
-4.  **Transaction Encapsulation**: Database transactions (`BEGIN ... COMMIT/ROLLBACK`) MUST be managed at the `Service` layer boundary, not inside individual atomic repository queries.
+### 3.3 Universal Architectural Guardrails
+1.  **Zero-Colocation Rule**: Entities (`model/`), Schemas (`dto/`), Handlers (`handler/`), and Business Logic (`service/`) MUST NEVER be colocated in the same file or shared directory.
+2.  **2-Model Boundary Discipline**: DTOs in `dto/` strictly isolate transport contracts from persistent database models in `model/`.
+3.  **Repository Isolation**: Repositories represent atomic aggregate boundaries and **MUST NEVER** call other repositories. Multi-entity coordination occurs at the Service layer.
+4.  **No Bypass & No Reverse Coupling**: Handlers MUST NEVER call repositories or database pools directly; inner layers MUST NEVER reference outer layers.
+5.  **Dependency Inversion & Abstractions**: Inner business logic depends on abstractions, never on low-level infrastructure drivers. (In Go backends, structural typing enables unexported Consumer-Driven Interfaces; nominal languages use shared domain/ports contracts).
 
 ### 3.4 Unified Directory Layout
+> *Note: For Go backend services, the canonical structural reference is [`references/go-project-structure.md`](file:///references/go-project-structure.md).*
+
 ```text
 <project-root>/
 ├── docs/                             # Engineering specifications & blueprints
+│   ├── 00-pipeline.md                # Project Governance & Stage Status Dashboard
 │   ├── 01-brd.md                     # Business Requirements Document (CMMI-DEV / ISO 29148)
 │   ├── 02-srs.md                     # Software Requirements Specification (ISO 29148 / EARS)
 │   ├── 03-architecture.md            # System Architecture Document (C4, Tactics, HA/DR)
@@ -159,11 +160,19 @@ All codebase interactions MUST respect the strict unidirectional dependency flow
 │   └── adr/                          # Architectural Decision Records (MADR format)
 ├── migrations/                       # Deterministic SQL schema migrations (up/down)
 └── src/ (or internal/ for Go)
-    ├── router/                       # Routing tables, middleware pipelines
-    ├── controller/                   # Request deserialization, status serialization
-    ├── service/                      # Core business logic, domain rules, transactions
-    ├── repository/                   # Interface-driven SQL queries, connection pools
-    └── model/                        # Domain entities, value objects, request/response DTOs
+    ├── config/                       # Strongly-typed environment configuration
+    ├── apperror/                     # Centralized domain error taxonomy (RFC 7807)
+    ├── logger/                       # Structured logging configuration & context helpers
+    ├── security/                     # Cryptographic tooling (JWT, password hashing)
+    ├── metrics/                      # Prometheus observability metrics registry
+    ├── router/                       # URL route mapping & middleware pipeline
+    ├── handler/                      # Transport adapters & request parsing (FLAT)
+    ├── middleware/                   # HTTP interceptors (auth, logger, metrics, cors)
+    ├── service/                      # Core business logic & Consumer Interfaces (FLAT)
+    ├── repository/                   # Application-owned persistence (FLAT)
+    ├── infra/                        # External adapters (Third-party SDKs, Event Bus)
+    ├── model/                        # Domain entities & database models
+    └── dto/                          # Request & response transfer schemas (Zero-Colocation)
 ```
 
 ---
