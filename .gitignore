@@ -23,3 +23,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 *.log
+
+# Temporary & Local Scratch
+tmp/
+
