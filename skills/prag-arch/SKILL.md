@@ -55,16 +55,25 @@ By default, **DO NOT** generate or write the entire architecture document in a s
    - **Architecture Discovery Gate (MANDATORY)**: Read `docs/constitution.md`, `01-brd.md`, and `02-srs.md`. Propose 2-3 architectural approaches (Modular Monolith vs Microservices) and candidates for core tech stack with trade-offs.
    - Establish non-negotiable technical constraints and SLA/SLO drivers.
    - **STOP and wait for user confirmation**. DO NOT write any files until the user chooses the architectural style and tech stack.
-2. **Milestone 2: Architecture Style, Boundary Rules & Directory Layout (Section 3)**:
+2. **Milestone 2: Architecture Style, Boundary Rules, Directory Layout & Macro Patterns (Section 3)**:
    - **Enforce Universal Invariants (All Languages & Domains)**:
      - *Zero-Colocation Rule*: Entities (`model/`), DTOs (`dto/`), Handlers/Controllers (`handler/`), and Business Logic (`service/`) MUST NEVER be colocated in the same file or shared directory.
      - *2-Model Boundary Discipline*: Dedicated transport DTOs protecting internal entities from mass-assignment and leaks.
      - *Self-Describing Package Names*: Banned: `util`, `helper`, `common`, `platform`, `shared`, `misc`.
      - *Repository Isolation*: Repositories represent atomic aggregate boundaries and MUST NEVER call other repositories.
      - *Dependency Inversion*: Business logic depends on abstractions, never on low-level database drivers or external transport frameworks.
-   - **Go-Specific Architecture Paradigm**: For Go backends, ingest and align with `references/go-project-structure.md`. In Go, structural typing enables **Consumer-Driven Interfaces** (unexported interfaces declared at the consumer, concrete structs exported by producers). Note: Nominal languages (Java, C#, TypeScript) place interfaces in shared domain/ports packages instead.
-   - **Mandatory Collaborative Discussion Gate**: Present the planned directory layout to the user in chat. If recommending any project-specific adaptations to the canonical blueprint, explain the technical trade-offs.
-   - **STOP and wait for user confirmation**. Directory layout variations are permitted IF AND ONLY IF explicitly discussed and approved by the human engineer. DO NOT write Section 3 until the user approves the structure.
+   - **Canonical Architecture Benchmark (`references/go-project-structure.md`)**:
+     - For **Go backends**: Ingest and align directly with `references/go-project-structure.md` as the canonical production blueprint. Go's structural typing enables idiomatic **Consumer-Driven Interfaces** (unexported interfaces declared at the consumer, concrete structs exported by producers).
+     - For **other stacks (Java, C#, TypeScript, Python)**: Treat `references/go-project-structure.md` as the architectural decoupling benchmark. Adapt interface placement to nominal typing paradigms (e.g., interfaces placed in dedicated domain/ports packages).
+   - **Macro Design Pattern Identification (Constitution Article 8)**:
+     - Proactively identify architectural patterns required to eliminate branching complexity or decouple external integrations:
+       - *Orchestrators/Facades*: Multi-aggregate transactional workflows without circular service dependencies.
+       - *Adapters*: Domain-owned wrappers for third-party SDKs and external APIs (`infra/`).
+       - *Provider Strategies*: Pluggable mechanisms for interchangeable backends (storage, payment, notifications).
+       - *Event-Driven Pub/Sub*: Asynchronous decoupling via events and background workers.
+     - *KISS/YAGNI Gate*: Forbid premature patterns if the domain is straightforward linear CRUD.
+   - **Mandatory Collaborative Discussion Gate**: Present the planned directory layout and chosen Macro Patterns to the user in chat. If recommending any project-specific adaptations to the canonical blueprint, explain the technical trade-offs.
+   - **STOP and wait for user confirmation**. Directory layout variations and pattern additions are permitted IF AND ONLY IF explicitly discussed and approved by the human engineer. DO NOT write Section 3 until the user approves the structure.
 3. **Milestone 3: Structural Views (C4 Model) (Section 4)**:
    - Structure Level 1 (System Context) and Level 2 (Container) diagrams using inline ````mermaid` blocks (Level 3 Component view selective).
    - STOP and confirm with user.

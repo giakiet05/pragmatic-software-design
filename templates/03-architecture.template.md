@@ -34,9 +34,10 @@
 - [2. Technology Stack & Selection Matrix](#2-technology-stack--selection-matrix)
 - [3. Architecture Style & Boundary Rules](#3-architecture-style--boundary-rules)
   - [3.1 Architectural Pattern](#31-architectural-pattern)
-  - [3.2 Strict 4-Tier Layering Invariants](#32-strict-4-tier-layering-invariants)
-  - [3.3 Architectural Guardrails (Forbidden Dependencies)](#33-architectural-guardrails-forbidden-dependencies)
+  - [3.2 Pragmatic Layering & Boundary Invariants](#32-pragmatic-layering--boundary-invariants)
+  - [3.3 Universal Architectural Guardrails](#33-universal-architectural-guardrails)
   - [3.4 Unified Directory Layout](#34-unified-directory-layout)
+  - [3.5 Macro Design Patterns & Structural Primitives](#35-macro-design-patterns--structural-primitives)
 - [4. Structural Views (C4 Model)](#4-structural-views-c4-model)
   - [4.1 System Context View (C4 Level 1)](#41-system-context-view-c4-level-1)
   - [4.2 Container View (C4 Level 2)](#42-container-view-c4-level-2)
@@ -174,6 +175,18 @@ All codebase interactions MUST respect unidirectional dependency flow and the 5 
     ├── model/                        # Domain entities & database models
     └── dto/                          # Request & response transfer schemas (Zero-Colocation)
 ```
+
+### 3.5 Macro Design Patterns & Structural Primitives
+*(Mandated by Constitution Article 8: Document patterns chosen to simplify structural coordination, decouple external dependencies, or eliminate branching complexity).*
+
+| Pattern Category | Concrete Pattern | Target Component / Package | Technical Problem Solved | Inherent Trade-off | Governing ADR |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Orchestration** | [e.g., Facade / Orchestrator] | `internal/service/checkout_orchestrator.go` | Coordinates multi-aggregate workflows (Order, Payment, Inventory) without circular cross-service dependencies. | Introduces an additional coordination layer; potential coordinator bloat if not scoped strictly. | [`ADR-0002`](file:///docs/adr/0002-orchestration.md) |
+| **Boundary Isolation** | [e.g., Adapter] | `internal/infra/payment/stripe_adapter.go` | Wraps external Stripe SDK behind internal domain interface, isolating core domain from upstream API churn. | Requires manual mapping between vendor DTOs and internal domain models. | [`ADR-0007`](file:///docs/adr/0007-payment-gateway.md) |
+| **Provider Pluggability** | [e.g., Strategy / Factory Provider] | `internal/infra/storage/` | Enables dynamic switching between S3, GCS, and local disk storage based on environment config without code changes. | Extra interface indirection; requires common denominator capability model. | [`ADR-0008`](file:///docs/adr/0008-storage-strategy.md) |
+| **Async Decoupling** | [e.g., Pub/Sub Event Bus] | `internal/event/` & `internal/worker/` | Offloads non-critical downstream side-effects (audit logs, emails) from request-response lifecycle. | Eventual consistency; requires idempotent handlers and dead-letter queue handling. | [`ADR-0009`](file:///docs/adr/0009-event-bus.md) |
+
+> **Anti-Over-Engineering Guardrail**: If the system domain is straightforward linear CRUD with single implementations, explicitly declare: `N/A - Standard flat layered architecture without advanced macro patterns (KISS & YAGNI verified)`.
 
 ---
 

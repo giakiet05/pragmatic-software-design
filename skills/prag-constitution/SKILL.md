@@ -1,6 +1,6 @@
 ---
 name: prag-constitution
-description: "Initialize, amend, or audit the project constitution (docs/constitution.md). Establishes 7 non-negotiable architectural articles, quality gates, and stack-specific tooling conventions before any specifications or code are written. Also initializes the project governance pipeline at docs/00-pipeline.md."
+description: "Initialize, amend, or audit the project constitution (docs/constitution.md). Establishes 8 non-negotiable architectural articles, quality gates, and stack-specific tooling conventions before any specifications or code are written. Also initializes the project governance pipeline at docs/00-pipeline.md."
 ---
 
 # Pragmatic Constitution (`prag-constitution`)
@@ -56,14 +56,15 @@ This skill's execution is **STRICTLY LIMITED** to creating or amending `<project
 If `docs/constitution.md` does not exist:
 1. Load `resources/template.md`.
 2. Populate Document Metadata (ID: `CONST-[PROJECT]-001`, Date, Author).
-3. Pre-fill all **7 Non-Negotiable Articles** tailored specifically to the chosen stack (or general modern standards if stack is TBD):
-   - **Article 1: Architecture-First & Spec Supremacy**: 4-tier layer boundary (`Router` -> `Controller` -> `Service` -> `Repository`), strict unidirectional dependencies, interface-driven decoupling.
-   - **Article 2: Stack Specialization & Modern Runtime**: Specific language runtime version (or TBD deferred to Stage 3 Architecture), idiomatic standards, standard library priority, no deprecated APIs.
-   - **Article 3: Zero-Secrets & Security Invariants**: No hardcoded secrets, `.env` file security, input validation before processing, least privilege.
-   - **Article 4: Structured Observability & Error Discipline**: JSON structured logger with context, strict error handling (wrap errors with context, no swallowed errors).
-   - **Article 5: Testing Discipline & Docker First**: Test-first development, race-detector validation, container-first test execution when Docker is present.
-   - **Article 6: Version Control & Clean Code**: English-only identifiers, zero emojis in code/logs/commits, Conventional Commits 1-line format (`feat(scope): message`).
-   - **Article 7: Pragmatism Over Dogma**: KISS/YAGNI over premature abstraction, no design patterns without concrete trade-off defense.
+3. Pre-fill all **8 Non-Negotiable Articles** tailored specifically to the chosen stack (or general modern standards if stack is TBD):
+   - **Article 1: Standard Library First & Minimal Dependencies**: Exhaust standard library before third-party packages, zero unvetted dependencies.
+   - **Article 2: Test-First Discipline & Concurrency Safety**: Red-green-refactor, concurrency race detection (`-race`), avoid brittle over-mocking.
+   - **Article 3: Structured JSON Logging Only**: Zero arbitrary console print statements; machine-readable JSON with standardized fields.
+   - **Article 4: Strict Explicit Error Handling**: Zero error swallowing; explicit checking, contextual error wrapping, RFC 7807 problem details.
+   - **Article 5: Pragmatic Architecture & Universal Boundary Invariants**: Zero-Colocation, 2-Model discipline, Repository isolation, Dependency Inversion. Canonical layout references `references/go-project-structure.md`.
+   - **Article 6: 12-Factor Configuration & Zero-Secrets Policy**: Strict environment variables, `.env.example` maintenance, zero committed secrets.
+   - **Article 7: Codebase Hygiene, 100% English & Doc Discipline**: English identifiers, complete doc comments on exported symbols, zero decorative emojis, 1-line Conventional Commits.
+   - **Article 8: Pragmatic Pattern Adoption**: Simplicity & decoupling first; eliminate branching explosion and isolate external boundaries via patterns; strictly enforce KISS/YAGNI against premature abstractions for simple CRUD.
 4. Set Section 4 (Amendments) with initial ratification.
 
 ### Step 3: Pipeline Initialization

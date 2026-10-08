@@ -39,6 +39,7 @@
   - [Article 5: Pragmatic Layered Architecture](#article-5-pragmatic-layered-architecture-kiss--yagni-first)
   - [Article 6: 12-Factor Configuration & Zero-Secrets Policy](#article-6-12-factor-configuration--zero-secrets-policy)
   - [Article 7: Codebase Hygiene, 100% English & Doc Discipline](#article-7-codebase-hygiene-100-english--doc-discipline)
+  - [Article 8: Pragmatic Pattern Adoption](#article-8-pragmatic-pattern-adoption-simplicity--decoupling-first)
 - [3. Architecture Gates & Enforcement](#3-architecture-gates--enforcement)
 - [4. Customization & Amendments](#4-customization--amendments)
 
@@ -95,6 +96,19 @@
 *   **Mandate**: 100% of all source code, variable/type names, documentation comments, log messages, and git commit messages MUST be in **English**. Every exported class, interface, struct, and function must have a standardized doc comment immediately above it explaining its purpose, parameters, returns, and error conditions. Emojis and decorative icons are strictly banned in code, comments, log strings, and commit messages. Commits must follow 1-line Conventional Commits: `<type>(<scope>): <short summary in English>`.
 *   **Standards**: [Specify doc standard: Go (GoDoc comments) | Python (PEP 257 Docstrings) | TypeScript (TSDoc / JSDoc)].
 *   **Exceptions**: End-user UI strings (i18n) when localized display text is explicitly requested.
+
+### Article 8: Pragmatic Pattern Adoption (Simplicity & Decoupling First)
+*   **Mandate**: Software design patterns MUST be prioritized whenever they measurably simplify code structure, eliminate duplication, reduce cyclomatic complexity, or decouple volatile dependencies. Patterns are tools for simplification, not intellectual showmanship:
+    1.  **Branching Elimination (Strategy / Table-Driven Dispatch)**: Replace proliferating conditional blocks (`if/else` ladders, expansive `switch/case` branches based on type, event, or status) with strategy objects or table-driven dispatch maps.
+    2.  **External Boundary Isolation (Adapter)**: All 3rd-party vendor SDKs, payment gateways, and cloud clients MUST be wrapped behind domain-owned adapters in `infra/` to shield core business logic from breaking upstream changes.
+    3.  **Cross-Aggregate Orchestration (Orchestrator / Facade)**: Complex multi-step operations spanning multiple domain models MUST be coordinated by specialized orchestrators/facades rather than coupling services directly to each other.
+    4.  **Cross-Cutting Concerns (Middleware / Decorator)**: Telemetry, distributed tracing, authentication, rate limiting, and idempotency checks MUST be extracted into composable middleware or decorators, keeping core handlers and services pristine.
+    5.  **Complex Struct Instantiation (Functional Options / Builder)**: Entities or client structs with > 3 optional configurations MUST utilize Functional Options (idiomatic Go) or the Builder pattern (OOP/TS) to avoid telescoping constructors and brittle nil-pointer checks.
+*   **Anti-Over-Engineering Guardrail (KISS & YAGNI First)**:
+    - Patterns are STRICTLY FORBIDDEN for straightforward linear CRUD flows with no branching complexity.
+    - Never introduce an abstract Factory or Strategy interface for a capability that has only one concrete implementation and no foreseeable variation.
+    - Every design pattern introduced at the architectural level MUST be documented in Section 3 of `docs/03-architecture.md`.
+*   **Exceptions**: Rapid prototypes or throwaway scripts where upfront abstraction hinders time-to-market, provided tech debt is formally logged.
 
 ---
 

@@ -48,7 +48,7 @@ Before writing any application code or executing migrations:
 ## 6-Point Definition of Done (DoD)
 
 Before updating any task from `- [ ]` to `- [x]` in `docs/06-tasks.md`, verify ALL 6 points:
-1. **Clean Compilation**: 0 syntax errors, builds cleanly.
+1. **Clean Compilation & Anti-Smell Cleanliness**: 0 syntax errors, builds cleanly; code smells resolved via pragmatic micro-patterns (Constitution Article 8).
 2. **Race-Detector Test Pass**: All automated tests pass with race detector enabled (`go test -race ./...`, `pytest`, `npm test`).
 3. **Explicit Error Discipline**: Every error path wrapped with contextual info; 0 silent failures or swallowed exceptions.
 4. **Linter Cleanliness**: 0 warnings under standard linter (`golangci-lint`, `ruff`, `eslint`).
@@ -68,12 +68,16 @@ Before updating any task from `- [ ]` to `- [x]` in `docs/06-tasks.md`, verify A
    - Wait for user confirmation before touching source code.
 3. **If user specified scope** (e.g., `triển khai T001` or `làm Phase 2`): Proceed immediately to implementation for that scope only.
 
-### Step 2: Test-First Implementation
+### Step 2: Test-First Implementation & Pragmatic Pattern Refactoring
 For any logic, repository query, or API handler:
 1. Write the Unit/Integration test first in the corresponding `*_test.go`, `test_*.py`, or `*.test.ts` file.
 2. Run the test command to confirm it fails (Red).
 3. Implement the minimal clean code in `[TargetFile]` to satisfy the test and specifications (Green).
-4. Refactor if needed while keeping tests passing.
+4. **Refactor via Pragmatic Micro-Patterns (Constitution Article 8)**: Inspect code for emerging smells before finalizing:
+   - *Telescoping Struct Config (> 3 optional parameters)*: Refactor to **Functional Options** (Go) or **Builder** (TS/Python).
+   - *Branching Ladders (`switch/case` or `if/else` over types/statuses)*: Refactor to **Strategy** or **Table-Driven Dispatch**.
+   - *Cross-Cutting Interceptions (telemetry, auth, rate-limiting, retry)*: Extract to composable **Middleware** or **Decorators**.
+   - *Anti-Over-Engineering Guardrail*: Never introduce premature abstract interfaces for linear CRUD flows with a single implementation.
 
 ### Step 3: Automated Verification
 Run the verification commands directly in the terminal:
