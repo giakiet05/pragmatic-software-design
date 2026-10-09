@@ -15,6 +15,7 @@ This document specifies **What the Software System Must Do**, defining contract 
 
 This skill's execution is **STRICTLY LIMITED** to creating or updating `<project-root>/docs/02-srs.md` and updating stage metadata in `docs/00-pipeline.md`:
 - You **MUST NOT** generate architecture blueprints (`03-architecture.md`), API specs (`04-api.md`), database schemas (`05-database.md`), or application source code.
+- Maintain **Pragmatic Technology Boundaries**: Document mandated external interfaces and infrastructure constraints, but keep Use Cases and EARS functional requirements implementation-independent (avoid hardcoding internal language runtimes, frameworks, or database engines into functional behaviors).
 - **NEVER SKIP GATES**: You MUST NOT proceed to Stage 3 (`/prag-arch`) until the human engineer explicitly signs off on `docs/02-srs.md`.
 - Immediately after writing or updating `docs/02-srs.md`, you **MUST STOP** and yield control back to the user for review.
 
@@ -25,7 +26,7 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 Before generating or modifying `docs/02-srs.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify if `<project-root>/docs/01-brd.md` exists.
 2. **Prerequisite Stage Status Check**: Verify that **Stage 1 (BRD)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 1 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
-3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 2 (SRS)** to `IN_PROGRESS`.
+3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 2 (SRS)** status to `IN_PROGRESS` and `Active Milestone` to `M1/6: Subsystem Boundaries`.
 
 ---
 
@@ -69,7 +70,7 @@ By default, **DO NOT** generate or write the entire SRS in a single turn. Treat 
    - Record resolved decisions in Clarifications Log.
    - STOP and confirm with user.
 
-**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/02-srs.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần Use Cases"*, *"save section"*). Write incrementally to the canonical file in-place.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/02-srs.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần Use Cases"*, *"save section"*). Write incrementally to the canonical file in-place, and update the `Active Milestone` column in `docs/00-pipeline.md` (e.g., advancing to `M2/6: Domain & State Machine`, `M3/6: System Use Cases`, etc.).
 
 ### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
 If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
@@ -86,7 +87,7 @@ If and only if the user explicitly commands full generation (e.g., *"gen cả fi
 
 ## Post-Generation Gate Hook & Stop
 1. Save `<project-root>/docs/02-srs.md`.
-2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 2 (SRS)** status to `IN_REVIEW`.
+2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 2 (SRS)** status to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
 3. Output a concise summary highlighting:
    - Total Use Cases (`UC`) and functional requirements (`FR`) mapped to EARS patterns.
    - High-priority ATAM scenarios `(H, H)`.

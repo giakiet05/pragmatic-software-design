@@ -72,15 +72,15 @@ If `<project-root>/docs/00-pipeline.md` does not exist:
 1. Load `templates/00-pipeline.template.md`.
 2. Determine project profile from user prompt (Enterprise Core vs Pure Technical / Infrastructure):
    - **Standard Business Project**:
-     - Stage 0 (Constitution): Mark as `APPROVED`.
-     - Stage 1 (BRD): Mark as `READY`.
-     - Stages 2 through 7: Mark strictly as `LOCKED`.
+     - Stage 0 (Constitution): Mark as `APPROVED` (`Active Milestone`: `Done`).
+     - Stage 1 (BRD): Mark as `READY` (`Active Milestone`: `-`).
+     - Stages 2 through 7: Mark strictly as `LOCKED` (`Active Milestone`: `-`).
    - **Pure Technical / Infra / Platform Project** (no business/PM requirements):
-     - Stage 0 (Constitution): Mark as `APPROVED`.
-     - Stage 1 (BRD): Mark as `N/A - Pure Technical/Infrastructure Project`.
-     - Stage 2 (SRS): Mark as `N/A - Pure Technical/Infrastructure Project`.
-     - Stage 3 (Architecture): Mark as `READY`.
-     - Stages 4 through 7: Mark strictly as `LOCKED`.
+     - Stage 0 (Constitution): Mark as `APPROVED` (`Active Milestone`: `Done`).
+     - Stage 1 (BRD): Mark as `N/A - Pure Technical/Infrastructure Project` (`Active Milestone`: `N/A`).
+     - Stage 2 (SRS): Mark as `N/A - Pure Technical/Infrastructure Project` (`Active Milestone`: `N/A`).
+     - Stage 3 (Architecture): Mark as `READY` (`Active Milestone`: `-`).
+     - Stages 4 through 7: Mark strictly as `LOCKED` (`Active Milestone`: `-`).
 3. Record initial ratification under Section 4 Audit Trail (`SIG-001`).
 
 ### Step 4: Incremental Amendment (Existing File)

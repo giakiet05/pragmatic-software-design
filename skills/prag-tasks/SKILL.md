@@ -25,7 +25,7 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 Before generating or modifying `docs/06-tasks.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify `docs/01-brd.md` through `docs/05-database.md`.
 2. **Prerequisite Stage Status Check**: Verify that **Stage 5 (Database Design)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 5 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
-3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** to `IN_PROGRESS`.
+3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** status to `IN_PROGRESS` and `Active Milestone` to `M1/5: Format & Phase 1 Setup`.
 
 ---
 
@@ -85,7 +85,7 @@ By default, **DO NOT** generate or write the entire tasks breakdown in a single 
    - Establish comprehensive hardening tasks: full test suite pass with `-race`, 0 linter warnings, dependency vulnerability scan (`govulncheck`), Docker smoke test, and 6-point DoD audit.
    - STOP and confirm with user.
 
-**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/06-tasks.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt Phase 1-2"*, *"save section"*). Write incrementally to the canonical file in-place.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/06-tasks.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt Phase 1-2"*, *"save section"*). Write incrementally to the canonical file in-place, and update the `Active Milestone` column in `docs/00-pipeline.md` (e.g., advancing to `M2/5: Phase 2 Foundation Gate`, `M3/5: Phase 3 Core MVP`, etc.).
 
 ### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
 If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
@@ -102,7 +102,7 @@ If and only if the user explicitly commands full generation (e.g., *"gen cả fi
 
 ## Post-Generation Gate Hook & Stop
 1. Save `<project-root>/docs/06-tasks.md`.
-2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** status to `IN_REVIEW`.
+2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 6 (Tasks Breakdown)** status to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
 3. Output a brief task summary highlighting:
    - Total task count and parallelizable `[P]` tasks.
    - Phase 2 blocking foundation components.

@@ -26,7 +26,7 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 Before initiating `docs/01-brd.md`, execute this check:
 1. **Pipeline Dashboard Check**: Check if `<project-root>/docs/00-pipeline.md` exists. If not, verify `<project-root>/docs/constitution.md`. If missing, report that prerequisite 'docs/constitution.md' is missing and halt execution, prompting the user to run `/prag-constitution` first. (Respond in the user's conversational language).
 2. **Prerequisite Stage Status Check**: If `docs/00-pipeline.md` exists, verify that **Stage 0 (Constitution)** is marked `APPROVED`. If not, **REJECT & HALT**.
-3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 1 (BRD)** to `IN_PROGRESS`.
+3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 1 (BRD)** status to `IN_PROGRESS` and `Active Milestone` to `M1/5: Business Context`.
 
 ---
 
@@ -64,7 +64,7 @@ By default, **DO NOT** generate or write the entire BRD in a single turn. Treat 
    - Assemble CMMI REQM Bidirectional Traceability Matrix linking `BO-xxx` <-> `US-xxx` <-> `BR-xxx` <-> `BU-R-xxx`.
    - STOP and confirm with user.
 
-**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/01-brd.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần 1"*, *"save section"*). Write incrementally to the canonical file in-place.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/01-brd.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần 1"*, *"save section"*). Write incrementally to the canonical file in-place, and update the `Active Milestone` column in `docs/00-pipeline.md` (e.g., advancing to `M2/5: Stakeholders & Scope`, `M3/5: User Stories`, etc.).
 
 ### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
 If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
@@ -81,7 +81,7 @@ If and only if the user explicitly commands full generation (e.g., *"gen cả fi
 
 ## Post-Generation Gate Hook & Stop
 1. Verify `<project-root>/docs/01-brd.md` is updated.
-2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 1 (BRD)** status to `IN_REVIEW`.
+2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 1 (BRD)** status to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
 3. Output a brief summary highlighting:
    - Total Business Objectives (`BO`), Requirements (`BR`), and User Journeys (`US`).
    - Core In-Scope vs Out-of-Scope boundaries.

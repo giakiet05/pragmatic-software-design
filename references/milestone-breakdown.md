@@ -28,25 +28,25 @@ It defines:
 
 | Engineer Command | AI Agent Behavior |
 | :--- | :--- |
-| `lock milestone [N]` / `write this section` / `save section` | Writes Milestone N content into the target document, reports checkpoint, and opens discussion for Milestone N+1. |
+| `lock milestone [N]` / `write this section` / `save section` | Writes Milestone N content into target document, updates `Active Milestone` column in `docs/00-pipeline.md`, reports checkpoint, and opens discussion for Milestone N+1. |
 | `revise [content]` / `switch to option B` | Keeps current Milestone discussion active, adjusts technical approach per feedback, **does not write to file**. |
-| `next` / `skip this section` | Skips or applies defaults to the current Milestone and advances directly to the next Milestone discussion. |
-| `generate full doc at once` / `write the whole file` | **Fast-Track Override**: Ingests all upstream context and generates 100% of the document to disk in a single pass. |
-| `approve [stage]` (e.g., `approve brd`, `approve srs`) | Transitions stage status in `docs/00-pipeline.md` from `IN_REVIEW` to `APPROVED`, unlocking the next stage to `READY`. |
-| `skip [stage] due to [reason]` / `bypass [stage]` | Marks stage as `N/A - [Reason]` in pipeline, records audit log entry, and unlocks the next stage. |
+| `next` / `skip this section` | Skips or applies defaults to the current Milestone, updates `Active Milestone` in `docs/00-pipeline.md`, and advances directly to the next Milestone discussion. |
+| `generate full doc at once` / `write the whole file` | **Fast-Track Override**: Ingests all upstream context, generates 100% of the document to disk in a single pass, and sets `Active Milestone` to `Complete (Awaiting Sign-off)`. |
+| `approve [stage]` (e.g., `approve brd`, `approve srs`) | Transitions stage status in `docs/00-pipeline.md` from `IN_REVIEW` to `APPROVED`, sets `Active Milestone` to `Done`, unlocking the next stage to `READY`. |
+| `skip [stage] due to [reason]` / `bypass [stage]` | Marks stage as `N/A - [Reason]` with `Active Milestone` as `N/A` in pipeline, records audit log entry, and unlocks the next stage. |
 
 ---
 
 ## 1. Stage 0: `/prag-constitution` (`docs/constitution.md`)
 **Template Reference**: `templates/constitution.template.md` & `templates/00-pipeline.template.md`  
-**Objective**: Establish 7 non-negotiable architectural articles, bind language/runtime constraints, and initialize the Master Governance Dashboard.  
+**Objective**: Establish 8 non-negotiable architectural articles, bind language/runtime constraints, and initialize the Master Governance Dashboard.  
 **Execution Characteristic**: *One-Shot Ratification Gate* (Executes in 4 sequential steps, stops for human sign-off before unlocking Stage 1).
 
 | Execution Step | Technical Objective | Detailed Agent Behavior |
 | :--- | :--- | :--- |
 | **Step 1: Clarification Gate** | Establish project identity | Scans workspace. If empty, clarifies: (1) Project concept/objectives, (2) Governance profile (`Standard Business` vs `Pure Technical/Infra`), (3) Language/runtime constraints if any. |
-| **Step 2: Ratify 7 Core Articles** | Establish non-negotiable rules | Tailors 7 core articles to stack (4-tier boundary, modern runtime, zero secrets, structured logging, test-first & Docker, clean code, KISS/YAGNI). |
-| **Step 3: Init Governance Dashboard** | Initialize pipeline state machine | Generates `docs/00-pipeline.md`. Sets Stage 0 to `APPROVED`, Stage 1 to `READY` (or `N/A` if Pure Technical), remaining stages to `LOCKED`. |
+| **Step 2: Ratify 8 Core Articles** | Establish non-negotiable rules | Tailors 8 core articles to stack (4-tier boundary, modern runtime, zero secrets, structured logging, test-first & Docker, clean code, KISS/YAGNI, pragmatic pattern adoption). |
+| **Step 3: Init Governance Dashboard** | Initialize pipeline state machine | Generates `docs/00-pipeline.md`. Sets Stage 0 to `APPROVED` (`Active Milestone`: `Done`), Stage 1 to `READY` (`Active Milestone`: `-`) (or `N/A` if Pure Technical), remaining stages to `LOCKED` (`-`). |
 | **Step 4: Verification & Sign-off** | Deliver project baseline | Persists `docs/constitution.md` and `docs/00-pipeline.md`. Reports summary and prompts engineer to run `/prag-brd`. |
 
 ---

@@ -25,7 +25,7 @@ This skill's execution is **STRICTLY LIMITED** to creating or updating `<project
 Before generating or modifying `docs/05-database.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify `docs/01-brd.md` through `docs/04-api.md`.
 2. **Prerequisite Stage Status Check**: Verify that **Stage 4 (API Specification)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 4 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
-3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 5 (Database Design)** to `IN_PROGRESS`.
+3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 5 (Database Design)** status to `IN_PROGRESS` and `Active Milestone` to `M1/5: Overview & Connection Pooling`.
 
 ---
 
@@ -66,7 +66,7 @@ By default, **DO NOT** generate or write the entire database design document in 
    - Establish zero-downtime migration conventions: Up/Down pairs, lock-free DDL (`CREATE INDEX CONCURRENTLY`, `NOT VALID` constraints, Expand-and-Contract), and baseline seed.
    - STOP and confirm with user.
 
-**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/05-database.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần ERD"*, *"save section"*). Write incrementally to the canonical file in-place.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/05-database.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần ERD"*, *"save section"*). Write incrementally to the canonical file in-place, and update the `Active Milestone` column in `docs/00-pipeline.md` (e.g., advancing to `M2/5: Logical Data Model ERD`, `M3/5: Physical Data Dictionary`, etc.).
 
 ### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
 If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
@@ -83,7 +83,7 @@ If and only if the user explicitly commands full generation (e.g., *"gen cả fi
 
 ## Post-Generation Gate Hook & Stop
 1. Save `<project-root>/docs/05-database.md`.
-2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 5 (Database Design)** status to `IN_REVIEW`.
+2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 5 (Database Design)** status to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
 3. Output a brief database summary highlighting:
    - Primary key strategy (UUIDv7 vs BIGSERIAL).
    - Concurrency locking strategy (Pessimistic vs Optimistic version counter).

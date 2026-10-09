@@ -29,7 +29,7 @@ Immediately after completing the architecture blueprint, you **MUST STOP** and y
 Before generating or modifying `docs/03-architecture.md`, execute this check:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`. If missing, verify `docs/01-brd.md` and `docs/02-srs.md`.
 2. **Prerequisite Stage Status Check**: Verify that **Stage 2 (SRS)** is marked `APPROVED` or `N/A`. If not, report that prerequisite Stage 2 has not been signed off or marked N/A, and halt execution. (Respond in the user's conversational language).
-3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 3 (Architecture)** to `IN_PROGRESS`.
+3. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 3 (Architecture)** status to `IN_PROGRESS` and `Active Milestone` to `M1/6: Drivers & Stack`.
 
 ---
 
@@ -90,7 +90,7 @@ By default, **DO NOT** generate or write the entire architecture document in a s
    - Generate **N discrete ADR files** in `docs/adr/` (`ADR-0001-...md`, `ADR-0002-...md`, etc.). Strictly **one decision per ADR**. Populate Section 9 ADR index and KISS/YAGNI Complexity Defense Table.
    - STOP and confirm with user.
 
-**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/03-architecture.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần C4"*, *"save section"*). Write incrementally to the canonical file in-place.
+**Write Trigger**: At each milestone, discuss and draft options in chat. **ONLY write or append to `docs/03-architecture.md` when the user explicitly instructs** (e.g., *"viết doc phần này"*, *"chốt phần C4"*, *"save section"*). Write incrementally to the canonical file in-place, and update the `Active Milestone` column in `docs/00-pipeline.md` (e.g., advancing to `M2/6: Style & Layout`, `M3/6: C4 Structural Views`, etc.).
 
 ### Mode 2: Fast-Track Full Generation (EXPLICIT USER OVERRIDE)
 If and only if the user explicitly commands full generation (e.g., *"gen cả file docs luôn đi"*, *"generate entire doc"*, *"viết hết luôn"*):
@@ -107,7 +107,7 @@ If and only if the user explicitly commands full generation (e.g., *"gen cả fi
 
 ## Post-Generation Gate Hook & Stop
 1. Save `<project-root>/docs/03-architecture.md` and all generated ADRs in `docs/adr/`.
-2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 3 (Architecture)** status to `IN_REVIEW`.
+2. Update `<project-root>/docs/00-pipeline.md`: set **Stage 3 (Architecture)** status to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
 3. Output a brief architectural summary highlighting:
    - Selected tech stack and primary trade-off rationale.
    - High-level container topology and capacity sizing highlights.

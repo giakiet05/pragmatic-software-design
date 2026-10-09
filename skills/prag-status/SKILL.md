@@ -29,13 +29,13 @@ When the user asks for status (*"tiến độ thế nào"*, *"xem pipeline"*, `"
    - If missing: Check if `<project-root>/docs/constitution.md` exists. If not initialized, report to the user that the pipeline is not initialized and prompt them to run `/prag-constitution` (respond in the user's conversational language).
 2. **Read & Render Master Dashboard**:
    - Read Section 2 of `docs/00-pipeline.md`.
-   - Render the current status table cleanly with clear status indicators:
-     - `APPROVED`: Ratified baseline.
-     - `N/A - [Reason]`: Intentionally bypassed stage.
-     - `IN_REVIEW`: Draft complete, awaiting human sign-off.
-     - `IN_PROGRESS`: Actively being drafted.
-     - `READY`: Unlocked and eligible to execute.
-     - `LOCKED`: Blocked until preceding stage is approved or marked N/A.
+   - Render the current status table cleanly including the `Active Milestone` column with clear status indicators:
+     - `APPROVED`: Ratified baseline (`Active Milestone`: `Done`).
+     - `N/A - [Reason]`: Intentionally bypassed stage (`Active Milestone`: `N/A`).
+     - `IN_REVIEW`: Draft complete, awaiting human sign-off (`Active Milestone`: `Complete (Awaiting Sign-off)`).
+     - `IN_PROGRESS`: Actively being drafted (displays exact milestone, e.g., `M2/6: Domain & State Machine`).
+     - `READY`: Unlocked and eligible to execute (`Active Milestone`: `-`).
+     - `LOCKED`: Blocked until preceding stage is approved or marked N/A (`Active Milestone`: `-`).
 3. **Identify Current Blocker & Next Action**:
    - If any stage is `IN_REVIEW`: Prompt user to review the generated artifact and approve it (respond in user's conversational language).
    - If a stage is `READY`: Prompt user to run the corresponding skill (respond in user's conversational language).
@@ -49,8 +49,9 @@ When the user issues a sign-off instruction (*"duyệt brd"*, *"approve srs"*, *
 3. Validate that the target stage is currently in `IN_REVIEW` (or `IN_PROGRESS`).
 4. Update `docs/00-pipeline.md`:
    - Change target stage status to `APPROVED`.
+   - Change target stage `Active Milestone` to `Done`.
    - Record current date/timestamp and approver name in the Master Dashboard table.
-   - Unlock the immediate next stage, changing its status from `LOCKED` to `READY`.
+   - Unlock the immediate next stage, changing its status from `LOCKED` to `READY` (with `Active Milestone`: `-`).
    - Append a new audit entry under `## 4. Formal Sign-off Audit Trail` with ID `SIG-xxx`, timestamp, approver, and brief notes.
 5. Save `docs/00-pipeline.md`.
 6. Output confirmation:
@@ -64,7 +65,8 @@ When the user instructs to bypass an irrelevant stage for lightweight tools, CLI
 2. Locate the target stage (e.g., Stage 4: API Specification).
 3. Update `docs/00-pipeline.md`:
    - Set target stage status to `N/A - [Concrete Technical Reason]`.
-   - Unlock the immediate next stage, changing its status from `LOCKED` to `READY`.
+   - Set target stage `Active Milestone` to `N/A`.
+   - Unlock the immediate next stage, changing its status from `LOCKED` to `READY` (with `Active Milestone`: `-`).
    - Append an audit entry under Section 4 with transition `LOCKED -> N/A` and the stated rationale.
 4. Save `docs/00-pipeline.md`.
 5. Output confirmation:

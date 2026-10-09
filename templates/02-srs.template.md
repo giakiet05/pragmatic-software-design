@@ -3,6 +3,9 @@
 1. DOMAIN FIDELITY: This document is a structural and semantic guide. You MUST adapt all entities, terminology, state transitions, and architectures strictly to the USER'S ACTUAL SYSTEM DOMAIN. NEVER copy placeholder examples (e.g., e-commerce orders, payments) unless they are genuinely required by the user's domain.
 2. PRAGMATIC PRUNING (YAGNI): Tailor depth and complexity to the project's scale. If a specific advanced architectural pattern (e.g., Table Partitioning, WebSockets, Circuit Breakers, Complex Multi-region DR) is demonstrably over-engineered for the current scope, explicitly mark it as "N/A - Omitted because [concrete technical reason]" rather than fabricating unnecessary complexity.
 3. ZERO PLACEHOLDER LEAKS: Replace all [BRACKETED_PLACEHOLDERS] with real, concrete project data. Never leave unpopulated template tags in the final generated document.
+4. PRAGMATIC TECHNOLOGY BOUNDARIES:
+   - PERMITTED IN SRS: Document mandated enterprise constraints (Section 1.3), third-party external integrations and message brokers in interface tables (Section 2.2), and high-level architectural perspectives (Section 1.1).
+   - FORBIDDEN IN SRS: Do NOT bind core functional behaviors, Use Case actor names, or EARS requirements to internal programming languages, web frameworks, or internal database engines (e.g., use "Ingestion Subsystem" instead of "Go Goroutine Worker", "In-Memory Query Cache" instead of "Redis", "Persistent Storage" instead of "Postgres Table"). Concrete internal framework, library, and microservice topology decisions belong strictly to Stage 3 (Architecture - SAD).
 -->
 
 # Software Requirements Specification (SRS): [SYSTEM NAME]
@@ -30,6 +33,7 @@
 - [1. System Overview & Scope](#1-system-overview--scope)
   - [1.1 Product Perspective & Context](#11-product-perspective--context)
   - [1.2 System Boundary & Responsibility](#12-system-boundary--responsibility)
+  - [1.3 Mandated Design & Implementation Constraints](#13-mandated-design--implementation-constraints)
 - [2. External Interface Requirements](#2-external-interface-requirements)
   - [2.1 User Interfaces (UI / UX / CLI Expectations)](#21-user-interfaces-ui--ux--cli-expectations)
   - [2.2 Software & Third-Party Interfaces](#22-software--third-party-interfaces)
@@ -67,6 +71,15 @@
 <!-- What does this software subsystem directly control and execute, versus what is delegated outside? -->
 *   **System Responsibilities**: [Core operations executed directly by this system]
 *   **External Boundaries**: [Operations strictly delegated to third-party APIs or infrastructure]
+
+### 1.3 Mandated Design & Implementation Constraints
+<!--
+  Per ISO/IEC/IEEE 29148 & Karl Wiegers: Document pre-existing constraints mandated by client policy,
+  enterprise platform standards, or academic research scope (e.g., target OS, mandatory cloud brokers,
+  or pre-selected AI/ML algorithms). Always state the concrete technical rationale.
+-->
+*   **[Constraint 1 - e.g., Target Platform / OS]**: [e.g., Containerized execution on standard Linux OS (Docker Compose) to guarantee self-hosted deployment autonomy.]
+*   **[Constraint 2 - e.g., Pre-Mandated Broker / DB]**: [e.g., Must integrate with pre-existing corporate message broker or storage cluster.]
 
 ---
 
@@ -245,7 +258,7 @@
     *   *Verification*: `T, A` (Rate Limiter Benchmark Test)
 
 ### 5.5 Optional Feature Requirements
-*   **FR-OPT-001**: Where Redis caching is enabled, the Query Service shall cache public catalog read operations with a 300-second TTL.
+*   **FR-OPT-001**: Where in-memory query caching is enabled, the Query Service shall cache public catalog read operations with a 300-second TTL.
     *   *Traceability*: Optional optimization
     *   *Input*: `GET /api/v1/catalog`, cache feature flag enabled
     *   *Output*: Catalog data served from memory cache; response header `X-Cache: HIT`
@@ -262,12 +275,12 @@
 
 | Quality Attribute | Stimulus & Context (Concrete Scenario) | System Response Measure | Priority (Business, Arch) | Architectural Tactic Link | Verification Method |
 | :--- | :--- | :--- | :---: | :--- | :---: |
-| **Performance** | 500 concurrent read requests hit the search endpoint | Latency P99 < 50ms, CPU utilization < 65% | **(High, Med)** | Cache-Aside (Redis) + DB Composite Index | `A` |
+| **Performance** | 500 concurrent read requests hit the search endpoint | Latency P99 < 50ms, CPU utilization < 65% | **(High, Med)** | Cache-Aside (In-Memory / Distributed Cache) + DB Composite Index | `A` |
 | **Availability** | Primary database process crashes unexpectedly | Read replica promoted within 30s; zero committed transaction loss (RPO = 0) | **(High, High)** | Connection Pool Health Check + Replication | `T, D` |
 | **Security** | Attacker executes SQL injection or XSS payload via form fields | Payload sanitized and rejected at controller layer; audit log recorded with client IP | **(High, Med)** | Parameterized Queries + Strict DTO Validation | `T` |
 | **Fault Tolerance** | Payment gateway upstream endpoint times out | Circuit breaker trips after 5 consecutive failures; local outbox retries asynchronously | **(High, High)** | Circuit Breaker Pattern + Transactional Outbox | `T` |
 | **Scalability** | Database table grows to 10,000,000 transaction records | Query latency degrades by no more than 10% compared to baseline | **(Med, Med)** | Table Partitioning + Index Optimization | `A` |
-| **Observability** | Any state mutation or 5xx server exception occurs | System emits structured JSON log with UTC timestamp, Request-ID, caller, latency, stack trace; zero emojis | **(High, Low)** | Structured Logger (Zap / structlog / Pino) | `T, I` |
+| **Observability** | Any state mutation or 5xx server exception occurs | System emits structured JSON log with UTC timestamp, Request-ID, caller, latency, stack trace; zero emojis | **(High, Low)** | Structured JSON Logger (slog / structlog / Pino) | `T, I` |
 | **Zero-Secrets** | System initializes runtime or dumps debug telemetry | 100% of credentials, API tokens, and DB passwords loaded from environment variables; zero hardcoded secrets | **(High, Low)** | Typed Environment Loader + Git Secret Audit | `I` |
 
 ---

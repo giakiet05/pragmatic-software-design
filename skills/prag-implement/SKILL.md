@@ -41,7 +41,7 @@ Before writing any application code or executing migrations:
 1. **Pipeline Dashboard Check**: Read `<project-root>/docs/00-pipeline.md`.
 2. **Prerequisite Stage Status Check**: Verify that **Stage 6 (Tasks Breakdown)** is marked `APPROVED`. If `docs/06-tasks.md` is in `IN_REVIEW`, `IN_PROGRESS`, or missing, report that prerequisite Stage 6 has not been signed off and halt execution, prompting the user to review `docs/06-tasks.md` first. (Respond in the user's conversational language).
 3. **Foundational Gate Check**: Phase 2 (Foundational Architecture) must be 100% completed and checked (`- [x]`) before implementing any Phase 3+ User Stories.
-4. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 7 (Implementation)** to `IN_PROGRESS`.
+4. **Set Stage Status**: Update `docs/00-pipeline.md`: set **Stage 7 (Implementation)** to `IN_PROGRESS` and `Active Milestone` to current phase/task (e.g., `Phase 1: Setup`).
 
 ---
 
@@ -94,5 +94,6 @@ If the test or build fails **2 consecutive times**:
 ### Step 5: Mark Task Complete
 Once all 6 DoD criteria are satisfied:
 1. Update `docs/06-tasks.md`, changing the task item from `- [ ]` to `- [x]`.
-2. Report the completed task to the user with test results.
-3. Suggest the next pending task or await the user's direction.
+2. Update `docs/00-pipeline.md`: update `Active Milestone` to reflect current phase/task progress (e.g., `Phase 2 (T005/T012)`). If all phases and tasks are completed, set Stage 7 to `IN_REVIEW` and `Active Milestone` to `Complete (Awaiting Sign-off)`.
+3. Report the completed task to the user with test results.
+4. Suggest the next pending task or await the user's direction.
